@@ -13,41 +13,84 @@
       background: linear-gradient(135deg, #0b1a30, #0052d4);
       color: white;
       text-align: center;
-      padding: 40px 20px;
-      border-bottom-left-radius: 30px;
-      border-bottom-right-radius: 30px;
+      padding: 35px 20px;
+      border-bottom-left-radius: 25px;
+      border-bottom-right-radius: 25px;
     }
-    h1 { font-size: 26px; letter-spacing: 1px; margin-bottom: 5px; }
-    .tagline { color: #ffb300; font-size: 14px; font-weight: bold; margin-bottom: 20px; }
+    h1 { font-size: 24px; letter-spacing: 1px; margin-bottom: 5px; }
+    .tagline { color: #ffb300; font-size: 13px; font-weight: bold; margin-bottom: 18px; }
     
     /* Action Buttons */
-    .btn-group { display: flex; justify-content: center; gap: 15px; margin-top: 15px; }
+    .btn-group { display: flex; justify-content: center; gap: 12px; }
     .btn {
-      padding: 12px 24px;
+      padding: 10px 20px;
       border-radius: 25px;
       text-decoration: none;
       font-weight: bold;
-      font-size: 15px;
-      display: inline-block;
-      transition: 0.3s;
+      font-size: 14px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
     }
     .btn-call { background-color: #ffb300; color: #111; }
     .btn-wa { background-color: #25d366; color: white; }
     
     /* Container & Services */
-    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-    h2 { font-size: 20px; margin-bottom: 15px; text-align: center; color: #111; }
+    .container { max-width: 600px; margin: 0 auto; padding: 20px 15px; }
+    h2 { font-size: 19px; margin-bottom: 15px; text-align: center; color: #111; }
     
-    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    .card {
+    .services-list { display: flex; flex-direction: column; gap: 12px; }
+    
+    /* Accordion / Expandable Card */
+    .service-card {
       background: white;
-      padding: 20px 15px;
       border-radius: 12px;
-      text-align: center;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-      border-top: 4px solid #0052d4;
+      overflow: hidden;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.06);
+      border-left: 5px solid #0052d4;
+      transition: all 0.3s ease;
     }
-    .card h3 { font-size: 15px; color: #222; }
+    .service-header {
+      padding: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 15px;
+    }
+    .service-header span.icon { font-size: 18px; margin-right: 8px; }
+    .service-header .arrow { font-size: 14px; color: #666; transition: 0.3s; }
+    
+    .service-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease-out;
+      background: #fafbfc;
+      border-top: 1px solid #eee;
+    }
+    .service-content ul {
+      padding: 15px 20px 15px 35px;
+      font-size: 14px;
+      color: #444;
+      line-height: 1.6;
+    }
+    
+    .card-book-btn {
+      display: block;
+      margin: 0 15px 15px 15px;
+      background-color: #0052d4;
+      color: white;
+      text-align: center;
+      padding: 8px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: bold;
+    }
+
+    /* Active open card */
+    .service-card.active .arrow { transform: rotate(180deg); }
     
     /* Booking Form */
     .booking-box {
@@ -72,12 +115,12 @@
       border: none;
       padding: 12px;
       border-radius: 8px;
-      font-size: 16px;
+      font-size: 15px;
       font-weight: bold;
       cursor: pointer;
       margin-top: 10px;
     }
-    footer { text-align: center; padding: 20px; font-size: 12px; color: #777; }
+    footer { text-align: center; padding: 25px 15px; font-size: 12px; color: #777; }
   </style>
 </head>
 <body>
@@ -86,36 +129,132 @@
     <h1>SANDEEP ELECTROFIX</h1>
     <div class="tagline">⚡ POWERING YOUR TRUST ⚡</div>
     <div class="btn-group">
-      <!-- अपना फ़ोन नंबर डालें (उदा. +91XXXXXXXXXX) -->
       <a href="tel:+919026036445" class="btn btn-call">📞 Call Now</a>
-      <a href="https://wa.me/+919026036445" class="btn btn-wa">💬 WhatsApp</a>
+      <a href="https://wa.me/919026036445" class="btn btn-wa">💬 WhatsApp</a>
     </div>
   </header>
 
   <div class="container">
-    <h2>हमारी सेवाएँ (Our Services)</h2>
-    <div class="grid">
-      <div class="card"><h3>🏠 House Wiring</h3></div>
-      <div class="card"><h3>🔌 Switch & Board</h3></div>
-      <div class="card"><h3>💡 Light & Fan Fitting</h3></div>
-      <div class="card"><h3>⚠️ Short Circuit Fix</h3></div>
-      <div class="card"><h3>🔋 Inverter & Battery</h3></div>
-      <div class="card"><h3>🚿 Geyser Repair</h3></div>
+    <h2>हमारी सेवाएँ (Click to View Details)</h2>
+    
+    <div class="services-list">
+      
+      <!-- Service 1 -->
+      <div class="service-card" onclick="toggleService(this)">
+        <div class="service-header">
+          <div><span class="icon">🏠</span> House Wiring</div>
+          <span class="arrow">▼</span>
+        </div>
+        <div class="service-content">
+          <ul>
+            <li>Complete New House Pipe Fitting & Wiring</li>
+            <li>Concealed (POP/Wall) Wiring</li>
+            <li>MCB Box & Distribution Board Setup</li>
+            <li>Earth Pit & Earthing Installation</li>
+          </ul>
+          <a href="javascript:void(0)" onclick="quickBook('House Wiring')" class="card-book-btn">Book House Wiring</a>
+        </div>
+      </div>
+
+      <!-- Service 2 -->
+      <div class="service-card" onclick="toggleService(this)">
+        <div class="service-header">
+          <div><span class="icon">🔌</span> Switch & Board Fitting</div>
+          <span class="arrow">▼</span>
+        </div>
+        <div class="service-content">
+          <ul>
+            <li>Modular Switch Board Fitting & Replacement</li>
+            <li>Regulator & Socket Repair</li>
+            <li>Power Plug Fitting (16A / AC Socket)</li>
+          </ul>
+          <a href="javascript:void(0)" onclick="quickBook('Switch & Board Fitting')" class="card-book-btn">Book Switch Board Service</a>
+        </div>
+      </div>
+
+      <!-- Service 3 -->
+      <div class="service-card" onclick="toggleService(this)">
+        <div class="service-header">
+          <div><span class="icon">💡</span> Light & Fan Fitting</div>
+          <span class="arrow">▼</span>
+        </div>
+        <div class="service-content">
+          <ul>
+            <li>Ceiling Fan / Exhaust Fan Installation</li>
+            <li>False Ceiling & Profile Light Installation</li>
+            <li>Chandelier (Jhoomer) & Wall Lamp Fitting</li>
+            <li>LED Tube Light & Panel Light Fitting</li>
+          </ul>
+          <a href="javascript:void(0)" onclick="quickBook('Light & Fan Fitting')" class="card-book-btn">Book Light/Fan Service</a>
+        </div>
+      </div>
+
+      <!-- Service 4 -->
+      <div class="service-card" onclick="toggleService(this)">
+        <div class="service-header">
+          <div><span class="icon">⚠️</span> Short Circuit & Fault Repair</div>
+          <span class="arrow">▼</span>
+        </div>
+        <div class="service-content">
+          <ul>
+            <li>MCB Tripping Problem Solve</li>
+            <li>Burnt Wire / Short Circuit Detection</li>
+            <li>Meter Board Wiring & Neutral Fault Fix</li>
+          </ul>
+          <a href="javascript:void(0)" onclick="quickBook('Fault & Short Circuit Repair')" class="card-book-btn">Book Urgent Fault Repair</a>
+        </div>
+      </div>
+
+      <!-- Service 5 -->
+      <div class="service-card" onclick="toggleService(this)">
+        <div class="service-header">
+          <div><span class="icon">🔋</span> Inverter & Battery Setup</div>
+          <span class="arrow">▼</span>
+        </div>
+        <div class="service-content">
+          <ul>
+            <li>New Inverter & Battery Installation</li>
+            <li>Inverter Line Wiring & Setup</li>
+            <li>Battery Water Top-up & Health Check</li>
+          </ul>
+          <a href="javascript:void(0)" onclick="quickBook('Inverter & Battery Setup')" class="card-book-btn">Book Inverter Setup</a>
+        </div>
+      </div>
+
+      <!-- Service 6 -->
+      <div class="service-card" onclick="toggleService(this)">
+        <div class="service-header">
+          <div><span class="icon">🚿</span> Geyser & Home Appliances</div>
+          <span class="arrow">▼</span>
+        </div>
+        <div class="service-content">
+          <ul>
+            <li>Geyser Installation & Element Replacement</li>
+            <li>Water Motor Pump Starter Wiring</li>
+            <li>Room Heater / Cooler Wiring</li>
+          </ul>
+          <a href="javascript:void(0)" onclick="quickBook('Geyser & Appliances')" class="card-book-btn">Book Appliance Service</a>
+        </div>
+      </div>
+
     </div>
 
-    <div class="booking-box">
+    <!-- Booking Form -->
+    <div class="booking-box" id="bookingFormSection">
       <h2>सर्विस बुक करें</h2>
       <form onsubmit="sendBooking(event)">
         <input type="text" id="custName" placeholder="आपका नाम (Name)" required>
         <input type="text" id="custAddress" placeholder="पता / लोकेशन (Address)" required>
         <select id="custService" required>
           <option value="House Wiring">House Wiring</option>
-          <option value="Switch/Board Fitting">Switch / Board Fitting</option>
-          <option value="Light/Fan Repair">Light & Fan Repair</option>
-          <option value="Fault / Short Circuit">Short Circuit Fix</option>
+          <option value="Switch & Board Fitting">Switch & Board Fitting</option>
+          <option value="Light & Fan Fitting">Light & Fan Fitting</option>
+          <option value="Fault & Short Circuit Repair">Short Circuit / Fault Repair</option>
+          <option value="Inverter & Battery Setup">Inverter & Battery Setup</option>
+          <option value="Geyser & Appliances">Geyser & Appliances</option>
           <option value="Other Electrical Work">Other Electrical Work</option>
         </select>
-        <button type="submit" class="submit-btn">WhatsApp पर बुक करें</button>
+        <button type="submit" class="submit-btn">WhatsApp पर रिक्वेस्ट भेजें</button>
       </form>
     </div>
   </div>
@@ -125,19 +264,41 @@
   </footer>
 
   <script>
+    var MY_PHONE = "919026036445";
+
+    function toggleService(card) {
+      const content = card.querySelector('.service-content');
+      const isOpen = card.classList.contains('active');
+      
+      document.querySelectorAll('.service-card').forEach(c => {
+        c.classList.remove('active');
+        c.querySelector('.service-content').style.maxHeight = null;
+      });
+
+      if (!isOpen) {
+        card.classList.add('active');
+        content.style.maxHeight = content.scrollHeight + "px";
+      }
+    }
+
+    function quickBook(serviceName) {
+      event.stopPropagation();
+      document.getElementById('custService').value = serviceName;
+      document.getElementById('bookingFormSection').scrollIntoView({ behavior: 'smooth' });
+    }
+
     function sendBooking(e) {
       e.preventDefault();
       var name = document.getElementById('custName').value;
       var address = document.getElementById('custAddress').value;
       var service = document.getElementById('custService').value;
       
-      var phone = "+919026036445"; // यहाँ अपना 10 अंकों का नंबर (91 के साथ) डालें
-      var msg = "नमस्ते! मुझे इलेक्ट्रीशियन सर्विस की ज़रूरत है:%0A" +
+      var msg = "नमस्ते Sandeep Electrofix! मुझे सर्विस चाहिए:%0A" +
                 "- नाम: " + encodeURIComponent(name) + "%0A" +
                 "- सर्विस: " + encodeURIComponent(service) + "%0A" +
                 "- पता: " + encodeURIComponent(address);
                 
-      window.open("https://wa.me/" + phone + "?text=" + msg, "_blank");
+      window.open("https://wa.me/" + MY_PHONE + "?text=" + msg, "_blank");
     }
   </script>
 
