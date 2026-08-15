@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sandeep Electrofix | Electrical Services</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    body { background-color: #f4f6f9; color: #333; }
+    
+    /* Header & Hero */
+    header {
+      background: linear-gradient(135deg, #0b1a30, #0052d4);
+      color: white;
+      text-align: center;
+      padding: 40px 20px;
+      border-bottom-left-radius: 30px;
+      border-bottom-right-radius: 30px;
+    }
+    h1 { font-size: 26px; letter-spacing: 1px; margin-bottom: 5px; }
+    .tagline { color: #ffb300; font-size: 14px; font-weight: bold; margin-bottom: 20px; }
+    
+    /* Action Buttons */
+    .btn-group { display: flex; justify-content: center; gap: 15px; margin-top: 15px; }
+    .btn {
+      padding: 12px 24px;
+      border-radius: 25px;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 15px;
+      display: inline-block;
+      transition: 0.3s;
+    }
+    .btn-call { background-color: #ffb300; color: #111; }
+    .btn-wa { background-color: #25d366; color: white; }
+    
+    /* Container & Services */
+    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+    h2 { font-size: 20px; margin-bottom: 15px; text-align: center; color: #111; }
+    
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .card {
+      background: white;
+      padding: 20px 15px;
+      border-radius: 12px;
+      text-align: center;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+      border-top: 4px solid #0052d4;
+    }
+    .card h3 { font-size: 15px; color: #222; }
+    
+    /* Booking Form */
+    .booking-box {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      margin-top: 25px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    }
+    input, select {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+    .submit-btn {
+      width: 100%;
+      background-color: #0052d4;
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    footer { text-align: center; padding: 20px; font-size: 12px; color: #777; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>SANDEEP ELECTROFIX</h1>
+    <div class="tagline">⚡ POWERING YOUR TRUST ⚡</div>
+    <div class="btn-group">
+      <!-- अपना फ़ोन नंबर डालें (उदा. +91XXXXXXXXXX) -->
+      <a href="tel:+919876543210" class="btn btn-call">📞 Call Now</a>
+      <a href="https://wa.me/919876543210" class="btn btn-wa">💬 WhatsApp</a>
+    </div>
+  </header>
+
+  <div class="container">
+    <h2>हमारी सेवाएँ (Our Services)</h2>
+    <div class="grid">
+      <div class="card"><h3>🏠 House Wiring</h3></div>
+      <div class="card"><h3>🔌 Switch & Board</h3></div>
+      <div class="card"><h3>💡 Light & Fan Fitting</h3></div>
+      <div class="card"><h3>⚠️ Short Circuit Fix</h3></div>
+      <div class="card"><h3>🔋 Inverter & Battery</h3></div>
+      <div class="card"><h3>🚿 Geyser Repair</h3></div>
+    </div>
+
+    <div class="booking-box">
+      <h2>सर्विस बुक करें</h2>
+      <form onsubmit="sendBooking(event)">
+        <input type="text" id="custName" placeholder="आपका नाम (Name)" required>
+        <input type="text" id="custAddress" placeholder="पता / लोकेशन (Address)" required>
+        <select id="custService" required>
+          <option value="House Wiring">House Wiring</option>
+          <option value="Switch/Board Fitting">Switch / Board Fitting</option>
+          <option value="Light/Fan Repair">Light & Fan Repair</option>
+          <option value="Fault / Short Circuit">Short Circuit Fix</option>
+          <option value="Other Electrical Work">Other Electrical Work</option>
+        </select>
+        <button type="submit" class="submit-btn">WhatsApp पर बुक करें</button>
+      </form>
+    </div>
+  </div>
+
+  <footer>
+    &copy; 2026 Sandeep Electrofix. All Rights Reserved.
+  </footer>
+
+  <script>
+    function sendBooking(e) {
+      e.preventDefault();
+      var name = document.getElementById('custName').value;
+      var address = document.getElementById('custAddress').value;
+      var service = document.getElementById('custService').value;
+      
+      var phone = "919876543210"; // यहाँ अपना 10 अंकों का नंबर (91 के साथ) डालें
+      var msg = "नमस्ते! मुझे इलेक्ट्रीशियन सर्विस की ज़रूरत है:%0A" +
+                "- नाम: " + encodeURIComponent(name) + "%0A" +
+                "- सर्विस: " + encodeURIComponent(service) + "%0A" +
+                "- पता: " + encodeURIComponent(address);
+                
+      window.open("https://wa.me/" + phone + "?text=" + msg, "_blank");
+    }
+  </script>
+
+</body>
+</html>
