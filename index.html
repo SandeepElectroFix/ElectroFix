@@ -7,6 +7,7 @@
 <title>Sandeep ElectroFix – Material Estimate</title>
 
 <style>
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -16,13 +17,23 @@
 body {
   min-height: 100vh;
   font-family: Arial, sans-serif;
+
   background:
-    radial-gradient(circle at top, #0b2445 0%, #050b16 45%, #02050a 100%);
+    radial-gradient(
+      circle at top,
+      #0b2445 0%,
+      #050b16 45%,
+      #02050a 100%
+    );
+
   color: white;
   padding: 25px 15px;
 }
 
-/* HEADER */
+
+/* =========================
+   HEADER
+========================= */
 
 .header {
   text-align: center;
@@ -40,7 +51,10 @@ body {
   font-size: 14px;
 }
 
-/* STAGE GRID */
+
+/* =========================
+   STAGE GRID
+========================= */
 
 .stage-grid {
   width: 100%;
@@ -48,14 +62,21 @@ body {
   margin: auto;
 
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: 12px;
+
+  grid-template-columns:
+    repeat(auto-fit, minmax(180px, 1fr));
+
+  gap: 20px;
 }
 
-/* STAGE CARD */
+
+/* =========================
+   STAGE CARD
+========================= */
 
 .stage-card {
-  height: 140px;
+
+  height: 220px;
 
   background: #07182e;
 
@@ -79,9 +100,13 @@ body {
     box-shadow .3s ease;
 }
 
-/* ROTATING GRADIENT */
+
+/* =========================
+   ROTATING GRADIENT
+========================= */
 
 .stage-card::before {
+
   content: "";
 
   position: absolute;
@@ -89,16 +114,18 @@ body {
   width: 200%;
   height: 200%;
 
-  background: conic-gradient(
-    from 0deg,
-    #00c3ff,
-    #7b2ff7,
-    #00f2c3,
-    #ffe600,
-    #00c3ff
-  );
+  background:
+    conic-gradient(
+      from 0deg,
+      #00c3ff,
+      #7b2ff7,
+      #00f2c3,
+      #ffe600,
+      #00c3ff
+    );
 
-  animation: rotateCard 5s linear infinite;
+  animation:
+    rotateCard 5s linear infinite;
 
   filter:
     blur(8px)
@@ -107,9 +134,13 @@ body {
   z-index: 0;
 }
 
-/* INNER CARD */
+
+/* =========================
+   INNER CARD
+========================= */
 
 .stage-card::after {
+
   content: "";
 
   position: absolute;
@@ -128,12 +159,17 @@ body {
   z-index: 1;
 
   box-shadow:
-    inset 0 0 25px rgba(0,183,255,.12);
+    inset 0 0 25px
+    rgba(0,183,255,.12);
 }
 
-/* CONTENT */
+
+/* =========================
+   CONTENT
+========================= */
 
 .stage-content {
+
   position: relative;
 
   z-index: 2;
@@ -144,15 +180,20 @@ body {
 }
 
 .stage-icon {
+
   font-size: 42px;
 
   margin-bottom: 12px;
 
   filter:
-    drop-shadow(0 0 10px rgba(0,195,255,.45));
+    drop-shadow(
+      0 0 10px
+      rgba(0,195,255,.45)
+    );
 }
 
 .stage-number {
+
   font-size: 13px;
 
   color: #00c3ff;
@@ -165,6 +206,7 @@ body {
 }
 
 .stage-title {
+
   font-size: 18px;
 
   font-weight: 700;
@@ -175,6 +217,7 @@ body {
 }
 
 .stage-subtitle {
+
   margin-top: 8px;
 
   font-size: 12px;
@@ -182,10 +225,16 @@ body {
   color: #9fb6d1;
 }
 
-/* HOVER */
+
+/* =========================
+   HOVER
+========================= */
 
 .stage-card:hover {
-  transform: translateY(-8px) scale(1.02);
+
+  transform:
+    translateY(-8px)
+    scale(1.02);
 
   box-shadow:
     0 20px 45px rgba(0,0,0,.55),
@@ -193,20 +242,33 @@ body {
 }
 
 .stage-card:active {
-  transform: scale(.97);
+
+  transform:
+    scale(.97);
 }
 
-/* SELECTED */
+
+/* =========================
+   SELECTED
+========================= */
 
 .stage-card.selected {
+
   box-shadow:
-    0 0 20px rgba(0,195,255,.45),
-    0 0 45px rgba(255,230,0,.15);
+    0 0 20px
+    rgba(0,195,255,.45),
+
+    0 0 45px
+    rgba(255,230,0,.15);
 }
 
-/* ANIMATION */
+
+/* =========================
+   ANIMATION
+========================= */
 
 @keyframes rotateCard {
+
   from {
     transform: rotate(0deg);
   }
@@ -214,11 +276,16 @@ body {
   to {
     transform: rotate(360deg);
   }
+
 }
 
-/* RESULT PANEL */
+
+/* =========================
+   RESULT
+========================= */
 
 .result {
+
   width: 100%;
   max-width: 700px;
 
@@ -226,9 +293,12 @@ body {
 
   padding: 18px;
 
-  background: rgba(7,24,46,.85);
+  background:
+    rgba(7,24,46,.85);
 
-  border: 1px solid rgba(0,195,255,.25);
+  border:
+    1px solid
+    rgba(0,195,255,.25);
 
   border-radius: 15px;
 
@@ -237,7 +307,8 @@ body {
   display: none;
 
   box-shadow:
-    0 10px 30px rgba(0,0,0,.3);
+    0 10px 30px
+    rgba(0,0,0,.3);
 }
 
 .result.show {
@@ -245,6 +316,7 @@ body {
 }
 
 .result-title {
+
   color: #00c3ff;
 
   font-size: 13px;
@@ -253,6 +325,7 @@ body {
 }
 
 .result-stage {
+
   font-size: 20px;
 
   font-weight: bold;
@@ -260,73 +333,229 @@ body {
   color: #fff;
 }
 
-/* MOBILE */
+
+/* =========================
+   TABLET
+========================= */
+
+@media (max-width: 700px) {
+
+  .stage-grid {
+
+    grid-template-columns:
+      repeat(3, 1fr);
+
+    gap: 12px;
+  }
+
+  .stage-card {
+
+    height: 165px;
+
+    border-radius: 16px;
+  }
+
+  .stage-card::after {
+
+    border-radius: 12px;
+  }
+
+  .stage-content {
+
+    padding: 8px;
+  }
+
+  .stage-icon {
+
+    font-size: 30px;
+
+    margin-bottom: 7px;
+  }
+
+  .stage-number {
+
+    font-size: 10px;
+
+    margin-bottom: 5px;
+  }
+
+  .stage-title {
+
+    font-size: 13px;
+  }
+
+  .stage-subtitle {
+
+    font-size: 9px;
+
+    margin-top: 5px;
+  }
+
+}
+
+
+/* =========================
+   MOBILE
+========================= */
 
 @media (max-width: 500px) {
 
+  body {
+
+    padding:
+      15px 8px;
+  }
+
+  .header {
+
+    margin-bottom: 20px;
+  }
+
+  .header h1 {
+
+    font-size: 20px;
+  }
+
+  .header p {
+
+    font-size: 12px;
+  }
+
+  /*
+     3 CARDS PER ROW
+  */
+
   .stage-grid {
-    grid-template-columns: repeat(3, 1fr);
+
+    grid-template-columns:
+      repeat(3, 1fr);
+
     gap: 8px;
   }
 
   .stage-card {
-    height: 110px;
-    border-radius: 12px;
+
+    height: 145px;
+
+    border-radius: 14px;
   }
 
   .stage-card::after {
+
     inset: 3px;
-    border-radius: 9px;
+
+    border-radius: 11px;
   }
 
   .stage-content {
+
     padding: 5px;
   }
 
   .stage-icon {
-    font-size: 24px;
-    margin-bottom: 4px;
+
+    font-size: 25px;
+
+    margin-bottom: 5px;
   }
 
   .stage-number {
+
     font-size: 9px;
-    margin-bottom: 3px;
+
+    letter-spacing: .5px;
+
+    margin-bottom: 4px;
   }
 
   .stage-title {
-    font-size: 10px;
-    line-height: 1.15;
+
+    font-size: 11px;
+
+    line-height: 1.2;
   }
 
   .stage-subtitle {
+
     font-size: 8px;
+
+    line-height: 1.2;
+
     margin-top: 4px;
   }
+
+  .result {
+
+    margin-top: 20px;
+
+    padding: 14px;
+  }
+
+  .result-stage {
+
+    font-size: 16px;
+  }
+
 }
 
-/* VERY SMALL MOBILE */
 
-@media (max-width: 340px) {
+/* =========================
+   VERY SMALL MOBILE
+========================= */
+
+@media (max-width: 350px) {
 
   .stage-grid {
-    grid-template-columns: 1fr;
+
+    grid-template-columns:
+      repeat(3, 1fr);
+
+    gap: 6px;
   }
 
   .stage-card {
-    height: 170px;
+
+    height: 125px;
   }
+
+  .stage-icon {
+
+    font-size: 21px;
+  }
+
+  .stage-number {
+
+    font-size: 8px;
+  }
+
+  .stage-title {
+
+    font-size: 9px;
+  }
+
+  .stage-subtitle {
+
+    font-size: 7px;
+  }
+
 }
+
 </style>
 </head>
 
 
 <body>
 
-<!-- HEADER -->
+
+<!-- =========================
+     HEADER
+========================= -->
 
 <header class="header">
 
-  <h1>⚡ Material Estimate System</h1>
+  <h1>
+    ⚡ Material Estimate System
+  </h1>
 
   <p>
     Sandeep ElectroFix
@@ -335,9 +564,12 @@ body {
 </header>
 
 
-<!-- STAGES -->
+<!-- =========================
+     STAGES
+========================= -->
 
 <div class="stage-grid">
+
 
   <!-- STAGE 1 -->
 
@@ -350,7 +582,9 @@ body {
 
     <div class="stage-content">
 
-      <div class="stage-icon">⚡</div>
+      <div class="stage-icon">
+        ⚡
+      </div>
 
       <div class="stage-number">
         STAGE 1
@@ -380,7 +614,9 @@ body {
 
     <div class="stage-content">
 
-      <div class="stage-icon">🧱</div>
+      <div class="stage-icon">
+        🧱
+      </div>
 
       <div class="stage-number">
         STAGE 2
@@ -410,7 +646,9 @@ body {
 
     <div class="stage-content">
 
-      <div class="stage-icon">🔌</div>
+      <div class="stage-icon">
+        🔌
+      </div>
 
       <div class="stage-number">
         STAGE 3
@@ -440,7 +678,9 @@ body {
 
     <div class="stage-content">
 
-      <div class="stage-icon">💡</div>
+      <div class="stage-icon">
+        💡
+      </div>
 
       <div class="stage-number">
         STAGE 4
@@ -470,7 +710,9 @@ body {
 
     <div class="stage-content">
 
-      <div class="stage-icon">☁️</div>
+      <div class="stage-icon">
+        ☁️
+      </div>
 
       <div class="stage-number">
         STAGE 5
@@ -488,28 +730,68 @@ body {
 
   </div>
 
+
 </div>
 
 
-<!-- SELECTED STAGE -->
+<!-- =========================
+     RESULT
+========================= -->
 
-<div id="result" class="result">
+<div
+  id="result"
+  class="result"
+>
 
   <div class="result-title">
     SELECTED STAGE
   </div>
 
-  <div id="resultStage" class="result-stage">
-  </div>
+  <div
+    id="resultStage"
+    class="result-stage"
+  ></div>
 
 </div>
 
 
 <script>
 
+/* =========================
+   STAGE SELECTION
+========================= */
+
 function selectStage(card) {
 
-  /* Remove previous selection */
+  const result =
+    document.getElementById("result");
+
+  const resultStage =
+    document.getElementById("resultStage");
+
+
+  /*
+    SAME CARD CLICK
+    = DESELECT
+  */
+
+  if (
+    card.classList.contains("selected")
+  ) {
+
+    card.classList.remove("selected");
+
+    result.classList.remove("show");
+
+    resultStage.textContent = "";
+
+    return;
+  }
+
+
+  /*
+    REMOVE OLD SELECTION
+  */
 
   document
     .querySelectorAll(".stage-card")
@@ -520,12 +802,16 @@ function selectStage(card) {
     });
 
 
-  /* Select current card */
+  /*
+    SELECT CURRENT CARD
+  */
 
   card.classList.add("selected");
 
 
-  /* Get data */
+  /*
+    GET DATA
+  */
 
   const stage =
     card.dataset.stage;
@@ -534,52 +820,19 @@ function selectStage(card) {
     card.dataset.title;
 
 
-  /* Show result */
-
-  const result =
-    document.getElementById("result");
-
-  const resultStage =
-    document.getElementById("resultStage");
-
+  /*
+    SHOW RESULT
+  */
 
   resultStage.textContent =
     stage + " — " + title;
 
-
   result.classList.add("show");
-
-
-  /*
-    NEXT STEP:
-
-    Yahin se aapke existing
-    Material Estimate System ka:
-
-    Stage
-      ↓
-    Material
-      ↓
-    Type
-      ↓
-    Sub-Type
-      ↓
-    Colour
-      ↓
-    Quantity
-      ↓
-    Unit
-      ↓
-    Brand
-      ↓
-    Estimate
-
-    flow open kiya ja sakta hai.
-  */
 
 }
 
 </script>
+
 
 </body>
 </html>
