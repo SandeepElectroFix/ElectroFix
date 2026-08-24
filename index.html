@@ -770,14 +770,11 @@ function selectStage(card) {
     document.getElementById("resultStage");
 
 
-  /*
-    SAME CARD CLICK
-    = DESELECT
-  */
+  /* =========================
+     SAME CARD → UNSELECT
+  ========================= */
 
-  if (
-    card.classList.contains("selected")
-  ) {
+  if (card.classList.contains("selected")) {
 
     card.classList.remove("selected");
 
@@ -789,9 +786,9 @@ function selectStage(card) {
   }
 
 
-  /*
-    REMOVE OLD SELECTION
-  */
+  /* =========================
+     REMOVE OLD SELECTION
+  ========================= */
 
   document
     .querySelectorAll(".stage-card")
@@ -802,16 +799,16 @@ function selectStage(card) {
     });
 
 
-  /*
-    SELECT CURRENT CARD
-  */
+  /* =========================
+     SELECT CURRENT CARD
+  ========================= */
 
   card.classList.add("selected");
 
 
-  /*
-    GET DATA
-  */
+  /* =========================
+     GET DATA
+  ========================= */
 
   const stage =
     card.dataset.stage;
@@ -820,9 +817,9 @@ function selectStage(card) {
     card.dataset.title;
 
 
-  /*
-    SHOW RESULT
-  */
+  /* =========================
+     SHOW RESULT
+  ========================= */
 
   resultStage.textContent =
     stage + " — " + title;
@@ -831,8 +828,57 @@ function selectStage(card) {
 
 }
 
-</script>
 
+/* =========================
+   OUTSIDE TOUCH / CLICK
+========================= */
+
+document.addEventListener(
+  "click",
+  function(event) {
+
+    /*
+      Agar touch/click Stage Card ke
+      andar hua hai → kuch mat karo
+    */
+
+    if (
+      event.target.closest(".stage-card")
+    ) {
+      return;
+    }
+
+
+    /*
+      Agar card ke bahar click hua
+      → selection remove
+    */
+
+    document
+      .querySelectorAll(".stage-card")
+      .forEach(function(card) {
+
+        card.classList.remove("selected");
+
+      });
+
+
+    /*
+      Result bhi hide
+    */
+
+    document
+      .getElementById("result")
+      .classList.remove("show");
+
+    document
+      .getElementById("resultStage")
+      .textContent = "";
+
+  }
+);
+
+</script>
 
 </body>
 </html>
