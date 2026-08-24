@@ -264,33 +264,43 @@ body {
 
 @media (max-width: 500px) {
 
-  body {
-    padding: 20px 12px;
-  }
-
-  .header h1 {
-    font-size: 22px;
-  }
-
   .stage-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 14px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
   }
 
   .stage-card {
-    height: 180px;
+    height: 110px;
+    border-radius: 12px;
+  }
+
+  .stage-card::after {
+    inset: 3px;
+    border-radius: 9px;
+  }
+
+  .stage-content {
+    padding: 5px;
   }
 
   .stage-icon {
-    font-size: 34px;
+    font-size: 24px;
+    margin-bottom: 4px;
+  }
+
+  .stage-number {
+    font-size: 9px;
+    margin-bottom: 3px;
   }
 
   .stage-title {
-    font-size: 15px;
+    font-size: 10px;
+    line-height: 1.15;
   }
 
   .stage-subtitle {
-    font-size: 11px;
+    font-size: 8px;
+    margin-top: 4px;
   }
 }
 
