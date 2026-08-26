@@ -1,169 +1,507 @@
-.loading-wrapper {
-  width: min(90vw, 14rem);
-  height: clamp(2.5rem, 10vw, 3rem);
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+  >
 
-  position: relative;
-  overflow: hidden;
+  <title>Sandeep ElectroFix — Project List</title>
 
-  font-size: clamp(1.4rem, 7vw, 2rem);
-  font-family: monospace;
-  font-weight: 600;
+  <link rel="stylesheet" href="style.css">
+</head>
 
-  mask-image: linear-gradient(
-    to right,
-    rgba(0, 0, 0, 0),
-    rgba(0, 0, 0, 1) 20%,
-    rgba(0, 0, 0, 1) 80%,
-    rgba(0, 0, 0, 0)
-  );
+<body>
 
-  -webkit-mask-image: linear-gradient(
-    to right,
-    rgba(0, 0, 0, 0),
-    rgba(0, 0, 0, 1) 20%,
-    rgba(0, 0, 0, 1) 80%,
-    rgba(0, 0, 0, 0)
-  );
-}
+  <!-- =====================================================
+       LOADING SCREEN
+  ====================================================== -->
 
-/* Letters */
-.loading-letter {
-  width: 1ch;
+  <div id="loading-screen">
 
-  position: absolute;
-  top: 50%;
-  left: 100%;
+    <div class="loading-wrapper" aria-label="Loading">
 
-  transform: translateY(-50%);
+      <span class="loading-letter loading-letter1">L</span>
+      <span class="loading-letter loading-letter2">o</span>
+      <span class="loading-letter loading-letter3">a</span>
+      <span class="loading-letter loading-letter4">d</span>
+      <span class="loading-letter loading-letter5">i</span>
+      <span class="loading-letter loading-letter6">n</span>
+      <span class="loading-letter loading-letter7">g</span>
+      <span class="loading-letter loading-letter8">.</span>
+      <span class="loading-letter loading-letter9">.</span>
+      <span class="loading-letter loading-letter10">.</span>
 
-  animation:
-    loading-scroll 2.5s linear infinite,
-    loading-rainbow 2.5s infinite;
-}
+    </div>
 
-/* Scroll */
-@keyframes loading-scroll {
-  from {
-    left: 100%;
-  }
+  </div>
 
-  to {
-    left: -1ch;
-  }
-}
 
-/* Rainbow */
-@keyframes loading-rainbow {
-  0% {
-    color: white;
-  }
+  <!-- =====================================================
+       MAIN APP
+  ====================================================== -->
 
-  10% {
-    color: #ff0000;
-  }
+  <div id="app" class="hidden">
 
-  20% {
-    color: #ff8700;
-  }
+    <!-- HEADER -->
+    <header class="app-header">
 
-  30% {
-    color: #ffd300;
-  }
+      <div class="header-left">
 
-  40% {
-    color: #deff0a;
-  }
+        <div class="brand-area">
 
-  50% {
-    color: #a1ff0a;
-  }
+          <div class="brand-logo">
+            SE⚡
+          </div>
 
-  60% {
-    color: #0aff99;
-  }
+          <div class="brand-text">
+            <h1>Sandeep ElectroFix</h1>
+            <span>Project Material List</span>
+          </div>
 
-  70% {
-    color: #0aefff;
-  }
+        </div>
 
-  80% {
-    color: #147df5;
-  }
+      </div>
 
-  90% {
-    color: #580aff;
-  }
 
-  100% {
-    color: #be0aff;
-  }
-}
+      <div class="header-right">
 
-/* Letter timing */
-.loading-letter1 {
-  animation-delay: -2.25s;
-}
+        <button
+          id="languageBtn"
+          class="header-btn"
+          type="button"
+        >
+          EN
+        </button>
 
-.loading-letter2 {
-  animation-delay: -2s;
-}
+        <button
+          id="estimateBtn"
+          class="icon-btn"
+          type="button"
+          aria-label="Estimate"
+        >
+          📋
+        </button>
 
-.loading-letter3 {
-  animation-delay: -1.75s;
-}
+      </div>
 
-.loading-letter4 {
-  animation-delay: -1.5s;
-}
+    </header>
 
-.loading-letter5 {
-  animation-delay: -1.25s;
-}
 
-.loading-letter6 {
-  animation-delay: -1s;
-}
+    <!-- MAIN -->
+    <main class="main-content">
 
-.loading-letter7 {
-  animation-delay: -0.75s;
-}
+      <!-- PROJECT CARD -->
+      <section class="project-card">
 
-.loading-letter8 {
-  animation-delay: -0.5s;
-}
+        <div class="project-title">
 
-.loading-letter9 {
-  animation-delay: -0.25s;
-}
+          <div>
+            <span class="small-label">
+              ELECTRICAL WORK
+            </span>
 
-.loading-letter10 {
-  animation-delay: 0s;
-}
+            <h2 id="pageTitle">
+              Project List
+            </h2>
+          </div>
 
-/* Small phones */
-@media (max-width: 360px) {
-  .loading-wrapper {
-    width: 85vw;
-    height: 2.4rem;
-    font-size: 1.35rem;
-  }
-}
+          <div class="project-count">
 
-/* Tablets / Desktop */
-@media (min-width: 768px) {
-  .loading-wrapper {
-    width: 14rem;
-    height: 3rem;
-    font-size: 2rem;
-  }
-}
+            <span id="materialCount">
+              69
+            </span>
 
-/* Accessibility */
-@media (prefers-reduced-motion: reduce) {
-  .loading-letter {
-    animation: none;
-    position: static;
-    display: inline-block;
-    transform: none;
-  }
-}
+            <small>
+              MATERIALS
+            </small>
+
+          </div>
+
+        </div>
+
+
+        <!-- SEARCH -->
+        <div class="search-box">
+
+          <span class="search-icon">
+            🔍
+          </span>
+
+          <input
+            id="searchInput"
+            type="search"
+            placeholder="Search material..."
+            autocomplete="off"
+          >
+
+          <button
+            id="clearSearch"
+            class="clear-search"
+            type="button"
+          >
+            ×
+          </button>
+
+        </div>
+
+      </section>
+
+
+      <!-- =================================================
+           CONTENT AREA
+      ================================================== -->
+
+      <section class="section">
+
+        <div class="section-heading">
+
+          <button
+            id="backBtn"
+            class="back-btn hidden"
+            type="button"
+            aria-label="Back"
+          >
+            ←
+          </button>
+
+          <h3 id="sectionTitle">
+            ⚡ Project Stages
+          </h3>
+
+        </div>
+
+
+        <!-- STAGES -->
+        <div
+          id="stageList"
+          class="stage-list"
+        ></div>
+
+
+        <!-- MATERIALS -->
+        <div
+          id="materialList"
+          class="material-list hidden"
+        ></div>
+
+
+        <!-- OPTIONS -->
+        <div
+          id="optionList"
+          class="option-list hidden"
+        ></div>
+
+
+        <!-- DETAILS -->
+        <div
+          id="detailsView"
+          class="hidden"
+        >
+
+          <div class="details-card">
+
+            <div class="selected-material">
+
+              <span class="detail-label">
+                Selected Material
+              </span>
+
+              <strong id="selectedMaterialName">
+                —
+              </strong>
+
+            </div>
+
+
+            <div id="dynamicForm"></div>
+
+
+            <div class="form-row">
+
+              <div class="form-group">
+
+                <label for="quantityInput">
+                  Quantity
+                </label>
+
+                <input
+                  id="quantityInput"
+                  type="number"
+                  min="0"
+                  step="any"
+                  placeholder="Enter quantity"
+                >
+
+              </div>
+
+
+              <div class="form-group">
+
+                <label for="unitSelect">
+                  Unit
+                </label>
+
+                <select id="unitSelect">
+                  <option value="">
+                    Select Unit
+                  </option>
+                </select>
+
+              </div>
+
+            </div>
+
+
+            <div
+              id="brandGroup"
+              class="form-group hidden"
+            >
+
+              <label for="brandSelect">
+                Brand
+              </label>
+
+              <select id="brandSelect">
+
+                <option value="">
+                  Select Brand
+                </option>
+
+              </select>
+
+            </div>
+
+
+            <div class="form-group">
+
+              <label for="rateInput">
+                Rate (₹)
+              </label>
+
+              <input
+                id="rateInput"
+                type="number"
+                min="0"
+                step="0.01"
+                placeholder="Enter rate"
+              >
+
+            </div>
+
+
+            <div class="form-group">
+
+              <label>
+                Amount
+              </label>
+
+              <div
+                id="amountPreview"
+                class="amount-preview"
+              >
+                ₹0.00
+              </div>
+
+            </div>
+
+
+            <button
+              id="addEstimateBtn"
+              class="primary-btn"
+              type="button"
+            >
+              ➕ Add to Estimate
+            </button>
+
+          </div>
+
+        </div>
+
+
+        <!-- =================================================
+             ESTIMATE
+        ================================================== -->
+
+        <div
+          id="estimateView"
+          class="hidden"
+        >
+
+          <div
+            id="selectedItemsList"
+            class="selected-items-list"
+          ></div>
+
+
+          <div
+            id="emptyEstimate"
+            class="empty-state"
+          >
+
+            <div class="empty-icon">
+              📋
+            </div>
+
+            <h4>
+              Estimate Empty
+            </h4>
+
+            <p>
+              Materials add करने के बाद आपका estimate यहाँ दिखाई देगा।
+            </p>
+
+          </div>
+
+
+          <div
+            id="totalCard"
+            class="total-card hidden"
+          >
+
+            <div>
+
+              <span>
+                Grand Total
+              </span>
+
+              <small>
+                Total Estimate Amount
+              </small>
+
+            </div>
+
+            <strong id="grandTotal">
+              ₹0.00
+            </strong>
+
+          </div>
+
+
+          <div
+            id="estimateActions"
+            class="action-buttons hidden"
+          >
+
+            <button
+              id="clearEstimateBtn"
+              class="secondary-btn"
+              type="button"
+            >
+              Clear
+            </button>
+
+            <button
+              id="finalEstimateBtn"
+              class="primary-btn"
+              type="button"
+            >
+              Final Estimate
+            </button>
+
+          </div>
+
+        </div>
+
+      </section>
+
+    </main>
+
+
+    <!-- =====================================================
+         BOTTOM NAVIGATION
+    ====================================================== -->
+
+    <nav class="bottom-nav">
+
+      <button
+        class="nav-item active"
+        data-nav="home"
+        type="button"
+      >
+        <span>🏠</span>
+        <small>Home</small>
+      </button>
+
+
+      <button
+        class="nav-item"
+        data-nav="stages"
+        type="button"
+      >
+        <span>📦</span>
+        <small>Materials</small>
+      </button>
+
+
+      <button
+        class="nav-item"
+        data-nav="estimate"
+        type="button"
+      >
+        <span>📋</span>
+        <small>Estimate</small>
+      </button>
+
+
+      <button
+        class="nav-item"
+        data-nav="settings"
+        type="button"
+      >
+        <span>⚙️</span>
+        <small>Settings</small>
+      </button>
+
+    </nav>
+
+  </div>
+
+
+  <!-- =====================================================
+       POPUP
+  ====================================================== -->
+
+  <div
+    id="popupOverlay"
+    class="popup-overlay hidden"
+  >
+
+    <div class="popup">
+
+      <div class="popup-header">
+
+        <h3 id="popupTitle">
+          Details
+        </h3>
+
+        <button
+          id="popupClose"
+          class="popup-close"
+          type="button"
+        >
+          ×
+        </button>
+
+      </div>
+
+      <div
+        id="popupContent"
+        class="popup-content"
+      ></div>
+
+    </div>
+
+  </div>
+
+
+  <!-- =====================================================
+       JAVASCRIPT
+  ====================================================== -->
+
+  <script src="materials.js"></script>
+  <script src="app.js"></script>
+
+</body>
+</html>
