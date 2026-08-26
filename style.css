@@ -70,7 +70,211 @@ select {
   display: none !important;
 }
 
+/* =========================
+   LOADING SCREEN
+========================= */
 
+#loading-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 100%;
+  min-height: 100vh;
+
+  background: #050816;
+
+  transition:
+    opacity 0.4s ease,
+    visibility 0.4s ease;
+}
+
+#loading-screen.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* Loading animation wrapper */
+#loading-screen .loading-wrapper {
+  width: min(90vw, 14rem);
+  height: clamp(2.5rem, 10vw, 3rem);
+
+  position: relative;
+  overflow: hidden;
+
+  font-size: clamp(1.4rem, 7vw, 2rem);
+  font-family: monospace;
+  font-weight: 600;
+
+  mask-image: linear-gradient(
+    to right,
+    rgba(0, 0, 0, 0),
+    rgba(0, 0, 0, 1) 20%,
+    rgba(0, 0, 0, 1) 80%,
+    rgba(0, 0, 0, 0)
+  );
+
+  -webkit-mask-image: linear-gradient(
+    to right,
+    rgba(0, 0, 0, 0),
+    rgba(0, 0, 0, 1) 20%,
+    rgba(0, 0, 0, 1) 80%,
+    rgba(0, 0, 0, 0)
+  );
+}
+
+/* Loading letters */
+#loading-screen .loading-letter {
+  width: 1ch;
+
+  position: absolute;
+  top: 50%;
+  left: 100%;
+
+  transform: translateY(-50%);
+
+  animation:
+    loading-scroll 2.5s linear infinite,
+    loading-rainbow 2.5s infinite;
+}
+
+/* Scroll animation */
+@keyframes loading-scroll {
+  from {
+    left: 100%;
+  }
+
+  to {
+    left: -1ch;
+  }
+}
+
+/* Rainbow animation */
+@keyframes loading-rainbow {
+  0% {
+    color: white;
+  }
+
+  10% {
+    color: #ff0000;
+  }
+
+  20% {
+    color: #ff8700;
+  }
+
+  30% {
+    color: #ffd300;
+  }
+
+  40% {
+    color: #deff0a;
+  }
+
+  50% {
+    color: #a1ff0a;
+  }
+
+  60% {
+    color: #0aff99;
+  }
+
+  70% {
+    color: #0aefff;
+  }
+
+  80% {
+    color: #147df5;
+  }
+
+  90% {
+    color: #580aff;
+  }
+
+  100% {
+    color: #be0aff;
+  }
+}
+
+/* Letter timing */
+#loading-screen .loading-letter1 {
+  animation-delay: -2.25s;
+}
+
+#loading-screen .loading-letter2 {
+  animation-delay: -2s;
+}
+
+#loading-screen .loading-letter3 {
+  animation-delay: -1.75s;
+}
+
+#loading-screen .loading-letter4 {
+  animation-delay: -1.5s;
+}
+
+#loading-screen .loading-letter5 {
+  animation-delay: -1.25s;
+}
+
+#loading-screen .loading-letter6 {
+  animation-delay: -1s;
+}
+
+#loading-screen .loading-letter7 {
+  animation-delay: -0.75s;
+}
+
+#loading-screen .loading-letter8 {
+  animation-delay: -0.5s;
+}
+
+#loading-screen .loading-letter9 {
+  animation-delay: -0.25s;
+}
+
+#loading-screen .loading-letter10 {
+  animation-delay: 0s;
+}
+
+
+/* Small phones */
+@media (max-width: 360px) {
+
+  #loading-screen .loading-wrapper {
+    width: 85vw;
+    height: 2.4rem;
+    font-size: 1.35rem;
+  }
+}
+
+
+/* Tablets / Desktop */
+@media (min-width: 768px) {
+
+  #loading-screen .loading-wrapper {
+    width: 14rem;
+    height: 3rem;
+    font-size: 2rem;
+  }
+}
+
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+
+  #loading-screen .loading-letter {
+    animation: none;
+    position: static;
+    display: inline-block;
+    transform: none;
+  }
+}
 /* =========================
    APP
 ========================= */
