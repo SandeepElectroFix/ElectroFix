@@ -1,40 +1,399 @@
 /* =========================================================
    SANDEEP ELECTROFIX
    PROJECT LIST
-   MAIN JAVASCRIPT
-   APP ENGINE
+   MAIN JAVASCRIPT ENGINE
+   VERSION 1.0
 ========================================================= */
 
-(function () {
 
-  "use strict";
+/* =========================================================
+   GLOBAL STATE
+========================================================= */
 
-  /* =======================================================
-     GLOBAL STATE
-  ======================================================= */
+let currentLang =
+  localStorage.getItem("sandeepMaterialLang") || "hi";
 
-  let currentLang =
-    localStorage.getItem("sandeepMaterialLang") || "hi";
+let currentStage = null;
+let currentMaterial = null;
 
-  let selectedItems =
-    JSON.parse(
-      localStorage.getItem("sandeepEstimateItems") || "[]"
-    );
+let selectedOptions = {};
 
-  let currentStage = null;
-  let currentMaterial = null;
-  let currentValues = {};
+let selectedItems =
+  JSON.parse(
+    localStorage.getItem("sandeepEstimateItems") || "[]"
+  );
 
-  let navigationStack = [];
+let navigationStack = [];
 
 
-  /* =======================================================
-     DOM HELPERS
-  ======================================================= */
+/* =========================================================
+   DOM HELPERS
+========================================================= */
 
-  const $ = (id) =>
-    document.getElementById(id);
+const $ = id => document.getElementById(id);
 
+const stageList = $("stageList");
+const materialList = $("materialList");
+const optionList = $("optionList");
+const detailsView = $("detailsView");
+const estimateView = $("estimateView");
+
+const sectionTitle = $("sectionTitle");
+const pageTitle = $("pageTitle");
+const materialCount = $("materialCount");
+
+const searchInput = $("searchInput");
+const clearSearch = $("clearSearch");
+
+const backBtn = $("backBtn");
+
+const languageBtn = $("languageBtn");
+const estimateBtn = $("estimateBtn");
+
+const selectedMaterialName =
+  $("selectedMaterialName");
+
+const dynamicForm =
+  $("dynamicForm");
+
+const quantityInput =
+  $("quantityInput");
+
+const unitSelect =
+  $("unitSelect");
+
+const brandGroup =
+  $("brandGroup");
+
+const brandSelect =
+  $("brandSelect");
+
+const rateInput =
+  $("rateInput");
+
+const amountPreview =
+  $("amountPreview");
+
+const addEstimateBtn =
+  $("addEstimateBtn");
+
+const selectedItemsList =
+  $("selectedItemsList");
+
+const emptyEstimate =
+  $("emptyEstimate");
+
+const totalCard =
+  $("totalCard");
+
+const grandTotal =
+  $("grandTotal");
+
+const estimateActions =
+  $("estimateActions");
+
+const clearEstimateBtn =
+  $("clearEstimateBtn");
+
+const finalEstimateBtn =
+  $("finalEstimateBtn");
+
+const popupOverlay =
+  $("popupOverlay");
+
+const popupTitle =
+  $("popupTitle");
+
+const popupContent =
+  $("popupContent");
+
+const popupClose =
+  $("popupClose");
+
+
+/* =========================================================
+   TRANSLATIONS
+========================================================= */
+
+const TEXT = {
+
+  hi: {
+    projectList: "प्रोजेक्ट लिस्ट",
+    electricalWork: "इलेक्ट्रिकल वर्क",
+    materials: "मटेरियल",
+    stages: "प्रोजेक्ट स्टेज",
+    search: "मटेरियल खोजें...",
+    quantity: "मात्रा",
+    unit: "यूनिट",
+    brand: "ब्रांड",
+    rate: "रेट (₹)",
+    amount: "राशि",
+    addEstimate: "एस्टिमेट में जोड़ें",
+    estimate: "एस्टिमेट",
+    emptyEstimate: "एस्टिमेट खाली है",
+    emptyText:
+      "मटेरियल add करने के बाद आपका estimate यहाँ दिखाई देगा।",
+    grandTotal: "ग्रैंड टोटल",
+    totalEstimate: "कुल एस्टिमेट राशि",
+    clear: "क्लियर",
+    finalEstimate: "फाइनल एस्टिमेट",
+    select: "चुनें",
+    back: "वापस",
+    materialsCount: "मटेरियल",
+    edit: "एडिट",
+    delete: "डिलीट",
+    confirmClear:
+      "क्या आप पूरा estimate clear करना चाहते हैं?",
+    confirmDelete:
+      "क्या आप यह item delete करना चाहते हैं?",
+    saved: "Estimate save हो गया।",
+    noMaterials: "कोई material नहीं मिला।",
+    selectBrand: "ब्रांड चुनें",
+    nonBrand: "Non Brand / Local",
+    skipBrand: "Skip Brand",
+    finalTitle: "Final Estimate",
+    total: "Total"
+  },
+
+  en: {
+    projectList: "Project List",
+    electricalWork: "ELECTRICAL WORK",
+    materials: "MATERIALS",
+    stages: "Project Stages",
+    search: "Search material...",
+    quantity: "Quantity",
+    unit: "Unit",
+    brand: "Brand",
+    rate: "Rate (₹)",
+    amount: "Amount",
+    addEstimate: "Add to Estimate",
+    estimate: "Estimate",
+    emptyEstimate: "Estimate Empty",
+    emptyText:
+      "Your estimate will appear here after adding materials.",
+    grandTotal: "Grand Total",
+    totalEstimate: "Total Estimate Amount",
+    clear: "Clear",
+    finalEstimate: "Final Estimate",
+    select: "Select",
+    back: "Back",
+    materialsCount: "Materials",
+    edit: "Edit",
+    delete: "Delete",
+    confirmClear:
+      "Do you want to clear the complete estimate?",
+    confirmDelete:
+      "Do you want to delete this item?",
+    saved: "Estimate saved.",
+    noMaterials: "No material found.",
+    selectBrand: "Select Brand",
+    nonBrand: "Non Brand / Local",
+    skipBrand: "Skip Brand",
+    finalTitle: "Final Estimate",
+    total: "Total"
+  }
+
+};
+
+
+function t(key) {
+  return TEXT[currentLang]?.[key] || key;
+}
+
+
+/* =========================================================
+   LABEL FORMATTER
+========================================================= */
+
+function formatLabel(key) {
+
+  const labels = {
+
+    type: {
+      en: "Type",
+      hi: "टाइप"
+    },
+
+    subType: {
+      en: "Sub Type",
+      hi: "सब टाइप"
+    },
+
+    size: {
+      en: "Size",
+      hi: "साइज"
+    },
+
+    shape: {
+      en: "Shape",
+      hi: "शेप"
+    },
+
+    material: {
+      en: "Material",
+      hi: "मटेरियल"
+    },
+
+    module: {
+      en: "Module",
+      hi: "मॉड्यूल"
+    },
+
+    ways: {
+      en: "Ways",
+      hi: "वे"
+    },
+
+    depth: {
+      en: "Depth",
+      hi: "डेप्थ"
+    },
+
+    hookRod: {
+      en: "Hook Rod",
+      hi: "हुक रॉड"
+    },
+
+    conduitSize: {
+      en: "Conduit Size",
+      hi: "कंड्यूट साइज"
+    },
+
+    phase: {
+      en: "Phase",
+      hi: "फेज"
+    },
+
+    door: {
+      en: "Door",
+      hi: "डोर"
+    },
+
+    amp: {
+      en: "Ampere",
+      hi: "एम्पियर"
+    },
+
+    voltage: {
+      en: "Voltage",
+      hi: "वोल्टेज"
+    },
+
+    sensitivity: {
+      en: "Sensitivity",
+      hi: "सेंसिटिविटी"
+    },
+
+    colour: {
+      en: "Colour",
+      hi: "कलर"
+    },
+
+    base: {
+      en: "Base",
+      hi: "बेस"
+    },
+
+    wattage: {
+      en: "Wattage",
+      hi: "वॉटेज"
+    },
+
+    length: {
+      en: "Length",
+      hi: "लेंथ"
+    },
+
+    mounting: {
+      en: "Mounting",
+      hi: "माउंटिंग"
+    },
+
+    structure: {
+      en: "Structure",
+      hi: "स्ट्रक्चर"
+    },
+
+    ledDensity: {
+      en: "LED Density",
+      hi: "LED Density"
+    },
+
+    supply: {
+      en: "Supply",
+      hi: "सप्लाई"
+    },
+
+    ipRating: {
+      en: "IP Rating",
+      hi: "IP Rating"
+    },
+
+    sizeCutout: {
+      en: "Size / Cutout",
+      hi: "साइज / कटआउट"
+    },
+
+    diameter: {
+      en: "Diameter",
+      hi: "डायमीटर"
+    },
+
+    cableSize: {
+      en: "Cable Size",
+      hi: "केबल साइज"
+    },
+
+    studSize: {
+      en: "Stud Size",
+      hi: "स्टड साइज"
+    },
+
+    quantity: {
+      en: "Quantity",
+      hi: "मात्रा"
+    },
+
+    unit: {
+      en: "Unit",
+      hi: "यूनिट"
+    },
+
+    brand: {
+      en: "Brand",
+      hi: "ब्रांड"
+    }
+
+  };
+
+  return labels[key]?.[currentLang] || key;
+}
+
+
+/* =========================================================
+   INITIALIZATION
+========================================================= */
+
+window.addEventListener("DOMContentLoaded", () => {
+
+  updateLanguageUI();
+
+  updateMaterialCount();
+
+  bindEvents();
+
+  showHome();
+
+  updateEstimateView();
+
+});
+
+
+/* =========================================================
+   LOADING SCREEN
+========================================================= */
+
+window.addEventListener("load", () => {
 
   const loadingScreen =
     $("loading-screen");
@@ -42,254 +401,352 @@
   const app =
     $("app");
 
-  const stageList =
-    $("stageList");
+  setTimeout(() => {
 
-  const materialList =
-    $("materialList");
-
-  const optionList =
-    $("optionList");
-
-  const detailsView =
-    $("detailsView");
-
-  const estimateView =
-    $("estimateView");
-
-  const sectionTitle =
-    $("sectionTitle");
-
-  const backBtn =
-    $("backBtn");
-
-  const materialCount =
-    $("materialCount");
-
-  const searchInput =
-    $("searchInput");
-
-  const clearSearch =
-    $("clearSearch");
-
-  const languageBtn =
-    $("languageBtn");
-
-  const estimateBtn =
-    $("estimateBtn");
-
-  const pageTitle =
-    $("pageTitle");
-
-
-  /* =======================================================
-     LANGUAGE
-  ======================================================= */
-
-  function getName(material) {
-
-    if (!material || !material.name) {
-      return "";
+    if (loadingScreen) {
+      loadingScreen.classList.add("hidden");
     }
 
-    return (
-      material.name[currentLang] ||
-      material.name.en ||
-      material.name.hi ||
-      ""
+    if (app) {
+      app.classList.remove("hidden");
+    }
+
+  }, 700);
+
+});
+
+
+/* =========================================================
+   EVENTS
+========================================================= */
+
+function bindEvents() {
+
+  if (languageBtn) {
+
+    languageBtn.addEventListener(
+      "click",
+      toggleLanguage
     );
 
   }
 
 
-  function getLabel(value) {
+  if (estimateBtn) {
 
-    const labels = {
+    estimateBtn.addEventListener(
+      "click",
+      () => showEstimate()
+    );
 
-      quantity: {
-        en: "Quantity",
-        hi: "मात्रा"
-      },
+  }
 
-      unit: {
-        en: "Unit",
-        hi: "यूनिट"
-      },
 
-      brand: {
-        en: "Brand",
-        hi: "ब्रांड"
-      },
+  if (backBtn) {
 
-      type: {
-        en: "Type",
-        hi: "टाइप"
-      },
+    backBtn.addEventListener(
+      "click",
+      goBack
+    );
 
-      subType: {
-        en: "Sub Type",
-        hi: "सब टाइप"
-      },
+  }
 
-      size: {
-        en: "Size",
-        hi: "साइज"
-      },
 
-      colour: {
-        en: "Colour",
-        hi: "रंग"
-      },
+  if (searchInput) {
 
-      color: {
-        en: "Colour",
-        hi: "रंग"
-      },
+    searchInput.addEventListener(
+      "input",
+      handleSearch
+    );
 
-      material: {
-        en: "Material",
-        hi: "मटेरियल"
-      },
+  }
 
-      module: {
-        en: "Module",
-        hi: "मॉड्यूल"
-      },
 
-      amp: {
-        en: "Ampere",
-        hi: "एम्पियर"
-      },
+  if (clearSearch) {
 
-      voltage: {
-        en: "Voltage",
-        hi: "वोल्टेज"
-      },
+    clearSearch.addEventListener(
+      "click",
+      () => {
 
-      wattage: {
-        en: "Wattage",
-        hi: "वॉटेज"
-      },
+        searchInput.value = "";
 
-      length: {
-        en: "Length",
-        hi: "लंबाई"
-      },
+        handleSearch();
 
-      shape: {
-        en: "Shape",
-        hi: "शेप"
-      },
-
-      door: {
-        en: "Door",
-        hi: "डोर"
-      },
-
-      phase: {
-        en: "Phase",
-        hi: "फेज"
-      },
-
-      sensitivity: {
-        en: "Sensitivity",
-        hi: "सेंसिटिविटी"
-      },
-
-      base: {
-        en: "Base",
-        hi: "बेस"
-      },
-
-      mounting: {
-        en: "Mounting",
-        hi: "माउंटिंग"
-      },
-
-      structure: {
-        en: "Structure",
-        hi: "स्ट्रक्चर"
-      },
-
-      ledDensity: {
-        en: "LED Density",
-        hi: "LED Density"
-      },
-
-      supply: {
-        en: "Supply",
-        hi: "सप्लाई"
-      },
-
-      ipRating: {
-        en: "IP Rating",
-        hi: "IP Rating"
-      },
-
-      sizeCutout: {
-        en: "Cutout Size",
-        hi: "कटआउट साइज"
-      },
-
-      diameter: {
-        en: "Diameter",
-        hi: "डायमीटर"
-      },
-
-      depth: {
-        en: "Depth",
-        hi: "डेप्थ"
-      },
-
-      ways: {
-        en: "Ways",
-        hi: "वे"
-      },
-
-      hookRod: {
-        en: "Hook Rod",
-        hi: "हुक रॉड"
-      },
-
-      conduitSize: {
-        en: "Conduit Size",
-        hi: "कंड्यूट साइज"
-      },
-
-      cableSize: {
-        en: "Cable Size",
-        hi: "केबल साइज"
-      },
-
-      studSize: {
-        en: "Stud Size",
-        hi: "स्टड साइज"
-      },
-
-      sizeDisplay: {
-        en: "Size",
-        hi: "साइज"
-      },
-
-      rate: {
-        en: "Rate",
-        hi: "रेट"
       }
-
-    };
-
-    return (
-      labels[value]?.[currentLang] ||
-      labels[value]?.en ||
-      value
     );
 
   }
 
 
-  /* =======================================================
-     STAGE NAMES
-  ======================================================= */
+  if (quantityInput) {
+
+    quantityInput.addEventListener(
+      "input",
+      updateAmount
+    );
+
+  }
+
+
+  if (rateInput) {
+
+    rateInput.addEventListener(
+      "input",
+      updateAmount
+    );
+
+  }
+
+
+  if (unitSelect) {
+
+    unitSelect.addEventListener(
+      "change",
+      handleUnitChange
+    );
+
+  }
+
+
+  if (brandSelect) {
+
+    brandSelect.addEventListener(
+      "change",
+      handleBrandChange
+    );
+
+  }
+
+
+  if (addEstimateBtn) {
+
+    addEstimateBtn.addEventListener(
+      "click",
+      addCurrentToEstimate
+    );
+
+  }
+
+
+  if (clearEstimateBtn) {
+
+    clearEstimateBtn.addEventListener(
+      "click",
+      clearEstimate
+    );
+
+  }
+
+
+  if (finalEstimateBtn) {
+
+    finalEstimateBtn.addEventListener(
+      "click",
+      showFinalEstimate
+    );
+
+  }
+
+
+  if (popupClose) {
+
+    popupClose.addEventListener(
+      "click",
+      closePopup
+    );
+
+  }
+
+
+  if (popupOverlay) {
+
+    popupOverlay.addEventListener(
+      "click",
+      event => {
+
+        if (
+          event.target === popupOverlay
+        ) {
+          closePopup();
+        }
+
+      }
+    );
+
+  }
+
+
+  document
+    .querySelectorAll(".nav-item")
+    .forEach(button => {
+
+      button.addEventListener(
+        "click",
+        () => {
+
+          const nav =
+            button.dataset.nav;
+
+          handleNavigation(nav);
+
+        }
+      );
+
+    });
+
+}
+
+
+/* =========================================================
+   LANGUAGE
+========================================================= */
+
+function toggleLanguage() {
+
+  currentLang =
+    currentLang === "hi"
+      ? "en"
+      : "hi";
+
+  localStorage.setItem(
+    "sandeepMaterialLang",
+    currentLang
+  );
+
+  updateLanguageUI();
+
+  if (currentMaterial) {
+    renderDetails();
+  } else if (currentStage) {
+    renderMaterials(currentStage);
+  } else {
+    showHome();
+  }
+
+}
+
+
+function updateLanguageUI() {
+
+  if (languageBtn) {
+
+    languageBtn.textContent =
+      currentLang === "hi"
+        ? "EN"
+        : "HI";
+
+  }
+
+  if (searchInput) {
+
+    searchInput.placeholder =
+      t("search");
+
+  }
+
+  if (pageTitle) {
+
+    pageTitle.textContent =
+      t("projectList");
+
+  }
+
+  if (sectionTitle && !currentStage) {
+
+    sectionTitle.textContent =
+      "⚡ " + t("stages");
+
+  }
+
+}
+
+
+/* =========================================================
+   MATERIAL COUNT
+========================================================= */
+
+function updateMaterialCount() {
+
+  if (!materialCount) return;
+
+  const count =
+    typeof getMaterialCount === "function"
+      ? getMaterialCount()
+      : window.ESTIMATE_LIST.length;
+
+  materialCount.textContent =
+    count;
+
+}
+
+
+/* =========================================================
+   HOME
+========================================================= */
+
+function showHome() {
+
+  currentStage = null;
+  currentMaterial = null;
+  selectedOptions = {};
+
+  hideAllViews();
+
+  if (stageList) {
+
+    stageList.classList.remove("hidden");
+
+    renderStages();
+
+  }
+
+  if (sectionTitle) {
+
+    sectionTitle.textContent =
+      "⚡ " + t("stages");
+
+  }
+
+  if (backBtn) {
+
+    backBtn.classList.add("hidden");
+
+  }
+
+  setActiveNav("home");
+
+}
+
+
+function hideAllViews() {
+
+  if (stageList)
+    stageList.classList.add("hidden");
+
+  if (materialList)
+    materialList.classList.add("hidden");
+
+  if (optionList)
+    optionList.classList.add("hidden");
+
+  if (detailsView)
+    detailsView.classList.add("hidden");
+
+  if (estimateView)
+    estimateView.classList.add("hidden");
+
+}
+
+
+/* =========================================================
+   STAGES
+========================================================= */
+
+function renderStages() {
+
+  if (!stageList) return;
+
+  stageList.innerHTML = "";
 
   const stages = [
 
@@ -319,1206 +776,1884 @@
 
     {
       id: "stage5",
-      en: "Stage 5 — False Ceiling Wiring Material",
-      hi: "स्टेज 5 — फॉल्स सीलिंग वायरिंग मटेरियल"
+      en: "Stage 5 — False Ceiling Wiring",
+      hi: "स्टेज 5 — फॉल्स सीलिंग वायरिंग"
     }
 
   ];
 
 
-  /* =======================================================
-     LOADING SCREEN
-  ======================================================= */
-
-  function startLoading() {
-
-    setTimeout(function () {
-
-      if (loadingScreen) {
-        loadingScreen.classList.add("hidden");
-      }
-
-      if (app) {
-        app.classList.remove("hidden");
-      }
-
-      initializeApp();
-
-    }, 700);
-
-  }
-
-
-  /* =======================================================
-     INITIALIZE
-  ======================================================= */
-
-  function initializeApp() {
-
-    if (
-      window.getMaterialCount &&
-      materialCount
-    ) {
-
-      materialCount.textContent =
-        window.getMaterialCount();
-
-    }
-
-    if (languageBtn) {
-
-      languageBtn.textContent =
-        currentLang === "hi"
-          ? "EN"
-          : "HI";
-
-    }
-
-    renderStages();
-
-    updateEstimateView();
-
-  }
-
-
-  /* =======================================================
-     HIDE ALL MAIN VIEWS
-  ======================================================= */
-
-  function hideAllViews() {
-
-    if (stageList)
-      stageList.classList.add("hidden");
-
-    if (materialList)
-      materialList.classList.add("hidden");
-
-    if (optionList)
-      optionList.classList.add("hidden");
-
-    if (detailsView)
-      detailsView.classList.add("hidden");
-
-    if (estimateView)
-      estimateView.classList.add("hidden");
-
-  }
-
-
-  /* =======================================================
-     RENDER STAGES
-  ======================================================= */
-
-  function renderStages() {
-
-    hideAllViews();
-
-    if (!stageList) return;
-
-    stageList.classList.remove("hidden");
-
-    currentStage = null;
-    currentMaterial = null;
-
-    if (backBtn) {
-      backBtn.classList.add("hidden");
-    }
-
-    if (sectionTitle) {
-
-      sectionTitle.textContent =
-        currentLang === "hi"
-          ? "⚡ प्रोजेक्ट स्टेज"
-          : "⚡ Project Stages";
-
-    }
-
-    stageList.innerHTML = "";
-
-    stages.forEach(function (stage) {
-
-      const materials =
-        window.getMaterialsByStage
-          ? window.getMaterialsByStage(stage.id)
-          : [];
-
-      const card =
-        document.createElement("button");
-
-      card.type = "button";
-      card.className = "stage-card";
-
-      card.innerHTML = `
-        <div class="stage-card-icon">⚡</div>
-
-        <div class="stage-card-content">
-
-          <strong>
-            ${stage[currentLang] || stage.en}
-          </strong>
-
-          <small>
-            ${materials.length}
-            ${currentLang === "hi" ? "मटेरियल" : "Materials"}
-          </small>
-
-        </div>
-
-        <span class="stage-arrow">›</span>
-      `;
-
-      card.addEventListener(
-        "click",
-        function () {
-
-          navigationStack = ["stages"];
-
-          renderMaterials(stage.id);
-
-        }
-      );
-
-      stageList.appendChild(card);
-
-    });
-
-  }
-
-
-  /* =======================================================
-     RENDER MATERIALS
-  ======================================================= */
-
-  function renderMaterials(stageId) {
-
-    currentStage = stageId;
-
-    hideAllViews();
-
-    if (!materialList) return;
-
-    materialList.classList.remove("hidden");
-
-    if (backBtn) {
-      backBtn.classList.remove("hidden");
-    }
-
-    const stage =
-      stages.find(
-        item => item.id === stageId
-      );
-
-    if (sectionTitle) {
-
-      sectionTitle.textContent =
-        stage
-          ? stage[currentLang] || stage.en
-          : "Materials";
-
-    }
-
-    materialList.innerHTML = "";
+  stages.forEach(stage => {
 
     const materials =
-      window.getMaterialsByStage
-        ? window.getMaterialsByStage(stageId)
-        : [];
+      getMaterialsByStage(stage.id);
 
-    if (!materials.length) {
+    const card =
+      document.createElement("button");
 
-      materialList.innerHTML = `
-        <div class="empty-state">
-          <div class="empty-icon">📦</div>
-          <h4>
-            ${
-              currentLang === "hi"
-                ? "इस स्टेज में कोई मटेरियल नहीं है"
-                : "No materials found"
-            }
-          </h4>
-        </div>
-      `;
+    card.type = "button";
 
-      return;
+    card.className =
+      "stage-card";
 
-    }
+    card.innerHTML = `
 
+      <div class="stage-icon">
+        ⚡
+      </div>
 
-    materials.forEach(function (material) {
+      <h4>
+        ${stage[currentLang]}
+      </h4>
 
-      const card =
-        document.createElement("button");
+      <span>
+        ${materials.length}
+        ${t("materialsCount")}
+      </span>
 
-      card.type = "button";
-      card.className = "material-card";
+      <strong>
+        ›
+      </strong>
 
-      card.innerHTML = `
-        <div class="material-icon">🔌</div>
+    `;
 
-        <div class="material-content">
-
-          <strong>
-            ${getName(material)}
-          </strong>
-
-          <small>
-            ${
-              material.flow
-                ? material.flow
-                    .filter(
-                      x =>
-                        x !== "quantity" &&
-                        x !== "unit" &&
-                        x !== "brand"
-                    )
-                    .map(getLabel)
-                    .join(" • ")
-                : ""
-            }
-          </small>
-
-        </div>
-
-        <span class="material-arrow">›</span>
-      `;
-
-      card.addEventListener(
-        "click",
-        function () {
-
-          openMaterial(material);
-
-        }
-      );
-
-      materialList.appendChild(card);
-
-    });
-
-  }
-
-
-  /* =======================================================
-     OPEN MATERIAL
-  ======================================================= */
-
-  function openMaterial(material) {
-
-    currentMaterial = material;
-
-    currentValues = {};
-
-    navigationStack.push(
-      "material:" + material.id
+    card.addEventListener(
+      "click",
+      () => openStage(stage.id)
     );
 
-    if (material.flow) {
+    stageList.appendChild(card);
 
-      const firstStep =
-        material.flow.find(
-          step =>
-            step !== "quantity" &&
-            step !== "unit" &&
-            step !== "brand"
-        );
+  });
 
-      if (firstStep) {
+}
 
-        renderOptionStep(firstStep);
 
-        return;
+/* =========================================================
+   OPEN STAGE
+========================================================= */
 
-      }
+function openStage(stageId) {
 
+  navigationStack.push({
+    view: "home"
+  });
+
+  currentStage = stageId;
+  currentMaterial = null;
+
+  selectedOptions = {};
+
+  hideAllViews();
+
+  materialList.classList.remove("hidden");
+
+  renderMaterials(stageId);
+
+  const stageName =
+    getStageName(stageId);
+
+  sectionTitle.textContent =
+    "⚡ " + stageName;
+
+  backBtn.classList.remove("hidden");
+
+  setActiveNav("stages");
+
+}
+
+
+/* =========================================================
+   STAGE NAME
+========================================================= */
+
+function getStageName(stageId) {
+
+  const map = {
+
+    stage1: {
+      en: "Stage 1 — Slab Conduit Installation",
+      hi: "स्टेज 1 — स्लैब कंड्यूट इंस्टॉलेशन"
+    },
+
+    stage2: {
+      en: "Stage 2 — Wall Conduit Installation",
+      hi: "स्टेज 2 — वॉल कंड्यूट इंस्टॉलेशन"
+    },
+
+    stage3: {
+      en: "Stage 3 — Wiring Installation",
+      hi: "स्टेज 3 — वायरिंग इंस्टॉलेशन"
+    },
+
+    stage4: {
+      en: "Stage 4 — Final Electrical Fittings",
+      hi: "स्टेज 4 — फाइनल इलेक्ट्रिकल फिटिंग्स"
+    },
+
+    stage5: {
+      en: "Stage 5 — False Ceiling Wiring",
+      hi: "स्टेज 5 — फॉल्स सीलिंग वायरिंग"
     }
 
-    renderDetails();
+  };
+
+  return map[stageId]?.[currentLang]
+    || stageId;
+
+}
+
+
+/* =========================================================
+   MATERIAL LIST
+========================================================= */
+
+function renderMaterials(stageId, filter = "") {
+
+  if (!materialList) return;
+
+  materialList.innerHTML = "";
+
+  let materials =
+    getMaterialsByStage(stageId);
+
+  if (filter) {
+
+    const q =
+      filter
+        .trim()
+        .toLowerCase();
+
+    materials =
+      materials.filter(material => {
+
+        const en =
+          material.name?.en
+            ?.toLowerCase() || "";
+
+        const hi =
+          material.name?.hi
+            ?.toLowerCase() || "";
+
+        return (
+          en.includes(q) ||
+          hi.includes(q)
+        );
+
+      });
 
   }
 
 
-  /* =======================================================
-     RENDER OPTION STEP
-  ======================================================= */
+  if (!materials.length) {
 
-  function renderOptionStep(step) {
+    materialList.innerHTML = `
 
-    hideAllViews();
+      <div class="empty-state">
+        <div class="empty-icon">🔍</div>
+        <h4>${t("noMaterials")}</h4>
+      </div>
 
-    if (!optionList || !currentMaterial)
-      return;
+    `;
 
-    optionList.classList.remove("hidden");
+    return;
 
-    if (backBtn) {
-      backBtn.classList.remove("hidden");
-    }
+  }
 
-    if (sectionTitle) {
 
-      sectionTitle.textContent =
-        getName(currentMaterial) +
-        " — " +
-        getLabel(step);
+  materials.forEach(material => {
 
-    }
+    const card =
+      document.createElement("button");
 
-    optionList.innerHTML = "";
+    card.type = "button";
 
-    let values =
-      currentMaterial[step];
+    card.className =
+      "material-card";
 
-    const pendingKey =
-      step + "Pending";
+    const name =
+      material.name?.[currentLang]
+      || material.name?.en
+      || "Material";
 
-    const userInputKey =
-      step + "UserInput";
+    card.innerHTML = `
 
-    /* -----------------------------------------------------
-       User input
-    ----------------------------------------------------- */
+      <div class="material-card-icon">
+        ⚡
+      </div>
 
-    if (
-      currentMaterial[userInputKey] === true
-    ) {
+      <div class="material-card-content">
 
-      const wrapper =
-        document.createElement("div");
+        <strong>
+          ${escapeHTML(name)}
+        </strong>
 
-      wrapper.className =
-        "option-input-wrapper";
+      </div>
 
-      wrapper.innerHTML = `
-        <div class="form-group">
+      <span class="material-arrow">
+        ›
+      </span>
 
-          <label>
-            ${getLabel(step)}
-          </label>
+    `;
 
-          <input
-            id="customOptionInput"
-            type="text"
-            placeholder="${
-              currentLang === "hi"
-                ? "यहाँ दर्ज करें"
-                : "Enter here"
-            }"
-          >
+    card.addEventListener(
+      "click",
+      () => openMaterial(material)
+    );
 
-        </div>
+    materialList.appendChild(card);
 
-        <button
-          id="customOptionBtn"
-          class="primary-btn"
-          type="button"
-        >
-          ${
-            currentLang === "hi"
-              ? "आगे बढ़ें"
-              : "Continue"
-          }
-        </button>
-      `;
+  });
 
-      optionList.appendChild(wrapper);
+}
 
-      $("customOptionBtn")
-        ?.addEventListener(
-          "click",
-          function () {
 
-            const input =
-              $("customOptionInput");
+/* =========================================================
+   MATERIAL OPEN
+========================================================= */
 
-            if (!input || !input.value.trim()) {
+function openMaterial(material) {
 
-              alert(
-                currentLang === "hi"
-                  ? "कृपया जानकारी दर्ज करें"
-                  : "Please enter a value"
-              );
+  navigationStack.push({
+    view: "stage",
+    stage: currentStage
+  });
 
-              return;
+  currentMaterial = material;
 
-            }
+  selectedOptions = {};
 
-            currentValues[step] =
-              input.value.trim();
+  hideAllViews();
 
-            goNextStep(step);
+  optionList.classList.remove("hidden");
 
-          }
-        );
+  renderOptionView();
 
-      return;
+  const name =
+    material.name?.[currentLang]
+    || material.name?.en;
 
-    }
+  sectionTitle.textContent =
+    name;
 
+  backBtn.classList.remove("hidden");
 
-    /* -----------------------------------------------------
-       Pending data
-    ----------------------------------------------------- */
+}
 
-    if (
-      currentMaterial[pendingKey] === true
-    ) {
 
-      const wrapper =
-        document.createElement("div");
+/* =========================================================
+   OPTION VIEW
+========================================================= */
 
-      wrapper.className =
-        "option-input-wrapper";
+function renderOptionView() {
 
-      wrapper.innerHTML = `
-        <div class="form-group">
+  if (!optionList || !currentMaterial)
+    return;
 
-          <label>
-            ${getLabel(step)}
-          </label>
+  optionList.innerHTML = "";
 
-          <input
-            id="pendingOptionInput"
-            type="text"
-            placeholder="${
-              currentLang === "hi"
-                ? "दर्ज करें"
-                : "Enter value"
-            }"
-          >
+  const material =
+    currentMaterial;
 
-        </div>
+  const flow =
+    Array.isArray(material.flow)
+      ? material.flow
+      : [];
 
-        <button
-          id="pendingOptionBtn"
-          class="primary-btn"
-          type="button"
-        >
-          ${
-            currentLang === "hi"
-              ? "आगे बढ़ें"
-              : "Continue"
-          }
-        </button>
-      `;
 
-      optionList.appendChild(wrapper);
+  const optionFields =
+    flow.filter(field => {
 
-      $("pendingOptionBtn")
-        ?.addEventListener(
-          "click",
-          function () {
-
-            const input =
-              $("pendingOptionInput");
-
-            if (!input || !input.value.trim()) {
-
-              alert(
-                currentLang === "hi"
-                  ? "कृपया जानकारी दर्ज करें"
-                  : "Please enter a value"
-              );
-
-              return;
-
-            }
-
-            currentValues[step] =
-              input.value.trim();
-
-            goNextStep(step);
-
-          }
-        );
-
-      return;
-
-    }
-
-
-    /* -----------------------------------------------------
-       Normal options
-    ----------------------------------------------------- */
-
-    if (!Array.isArray(values)) {
-      values = [];
-    }
-
-    if (!values.length) {
-
-      goNextStep(step);
-
-      return;
-
-    }
-
-
-    values.forEach(function (value) {
-
-      const button =
-        document.createElement("button");
-
-      button.type = "button";
-      button.className = "option-card";
-
-      button.innerHTML = `
-        <span>${value}</span>
-        <b>›</b>
-      `;
-
-      button.addEventListener(
-        "click",
-        function () {
-
-          currentValues[step] =
-            value;
-
-          goNextStep(step);
-
-        }
+      return (
+        field !== "quantity" &&
+        field !== "unit" &&
+        field !== "brand"
       );
-
-      optionList.appendChild(button);
 
     });
 
+
+  if (!optionFields.length) {
+
+    openDetails();
+
+    return;
+
   }
 
 
-  /* =======================================================
-     NEXT STEP
-  ======================================================= */
+  optionFields.forEach(field => {
 
-  function goNextStep(currentStep) {
+    renderOptionField(
+      field,
+      material
+    );
 
-    if (!currentMaterial)
-      return;
+  });
 
-    const flow =
-      currentMaterial.flow || [];
 
-    const index =
-      flow.indexOf(currentStep);
+  const continueButton =
+    document.createElement("button");
 
-    let nextStep = null;
+  continueButton.type = "button";
 
-    for (
-      let i = index + 1;
-      i < flow.length;
-      i++
-    ) {
+  continueButton.className =
+    "primary-btn";
 
-      const step =
-        flow[i];
+  continueButton.textContent =
+    currentLang === "hi"
+      ? "आगे बढ़ें"
+      : "Continue";
 
-      if (
-        step === "quantity" ||
-        step === "unit" ||
-        step === "brand"
-      ) {
+  continueButton.addEventListener(
+    "click",
+    validateOptionsAndContinue
+  );
 
-        continue;
+  optionList.appendChild(
+    continueButton
+  );
+
+}
+
+
+/* =========================================================
+   OPTION FIELD
+========================================================= */
+
+function renderOptionField(
+  field,
+  material
+) {
+
+  const wrapper =
+    document.createElement("div");
+
+  wrapper.className =
+    "form-group";
+
+  const label =
+    document.createElement("label");
+
+  label.textContent =
+    formatLabel(field);
+
+  wrapper.appendChild(label);
+
+
+  /* -----------------------------------------
+     USER INPUT
+  ----------------------------------------- */
+
+  if (
+    material[field + "UserInput"] === true
+  ) {
+
+    const input =
+      document.createElement("input");
+
+    input.type = "text";
+
+    input.className =
+      "dynamic-input";
+
+    input.placeholder =
+      formatLabel(field);
+
+    input.dataset.field =
+      field;
+
+    input.value =
+      selectedOptions[field] || "";
+
+    input.addEventListener(
+      "input",
+      () => {
+
+        selectedOptions[field] =
+          input.value.trim();
 
       }
+    );
 
-      nextStep = step;
-      break;
+    wrapper.appendChild(input);
 
-    }
+    optionList.appendChild(wrapper);
 
-    if (nextStep) {
-
-      renderOptionStep(nextStep);
-
-    } else {
-
-      renderDetails();
-
-    }
+    return;
 
   }
 
 
-  /* =======================================================
-     RENDER DETAILS
-  ======================================================= */
+  /* -----------------------------------------
+     PENDING FIELD
+  ----------------------------------------- */
 
-  function renderDetails() {
+  if (
+    material[field + "Pending"] === true
+  ) {
 
-    hideAllViews();
+    const input =
+      document.createElement("input");
 
-    if (!detailsView || !currentMaterial)
-      return;
+    input.type = "text";
 
-    detailsView.classList.remove("hidden");
+    input.className =
+      "dynamic-input";
 
-    if (backBtn) {
-      backBtn.classList.remove("hidden");
-    }
+    input.placeholder =
+      currentLang === "hi"
+        ? `${formatLabel(field)} दर्ज करें`
+        : `Enter ${formatLabel(field)}`;
 
-    if (sectionTitle) {
+    input.dataset.field =
+      field;
 
-      sectionTitle.textContent =
-        currentLang === "hi"
-          ? "मटेरियल डिटेल्स"
-          : "Material Details";
+    input.value =
+      selectedOptions[field] || "";
 
-    }
+    input.addEventListener(
+      "input",
+      () => {
 
-    const selectedName =
-      $("selectedMaterialName");
+        selectedOptions[field] =
+          input.value.trim();
 
-    if (selectedName) {
+      }
+    );
 
-      selectedName.textContent =
-        getName(currentMaterial);
+    wrapper.appendChild(input);
 
-    }
+    optionList.appendChild(wrapper);
 
-    renderDynamicForm();
-
-    renderUnits();
-
-    renderBrands();
-
-    resetQuantityRate();
+    return;
 
   }
 
 
-  /* =======================================================
-     DYNAMIC FORM SUMMARY
-  ======================================================= */
+  /* -----------------------------------------
+     MODEL DEPENDENT
+  ----------------------------------------- */
 
-  function renderDynamicForm() {
+  if (
+    material[field + "ModelDependent"] === true
+  ) {
 
-    const dynamicForm =
-      $("dynamicForm");
+    const input =
+      document.createElement("input");
 
-    if (!dynamicForm || !currentMaterial)
-      return;
+    input.type = "text";
 
-    dynamicForm.innerHTML = "";
+    input.className =
+      "dynamic-input";
 
-    const flow =
-      currentMaterial.flow || [];
+    input.placeholder =
+      currentLang === "hi"
+        ? `${formatLabel(field)} दर्ज करें`
+        : `Enter ${formatLabel(field)}`;
 
-    const fields =
-      flow.filter(
-        step =>
-          step !== "quantity" &&
-          step !== "unit" &&
-          step !== "brand"
+    input.dataset.field =
+      field;
+
+    input.value =
+      selectedOptions[field] || "";
+
+    input.addEventListener(
+      "input",
+      () => {
+
+        selectedOptions[field] =
+          input.value.trim();
+
+      }
+    );
+
+    wrapper.appendChild(input);
+
+    optionList.appendChild(wrapper);
+
+    return;
+
+  }
+
+
+  /* -----------------------------------------
+     SPECIAL SCREW SIZE
+  ----------------------------------------- */
+
+  if (
+    field === "sizeDisplay" &&
+    material.sizeDisplayFormat
+  ) {
+
+    const input =
+      document.createElement("input");
+
+    input.type = "text";
+
+    input.className =
+      "dynamic-input";
+
+    input.readOnly = true;
+
+    input.placeholder =
+      material.sizeDisplayFormat;
+
+    input.value =
+      buildSizeDisplay(material);
+
+    wrapper.appendChild(input);
+
+    optionList.appendChild(wrapper);
+
+    return;
+
+  }
+
+
+  /* -----------------------------------------
+     NORMAL ARRAY
+  ----------------------------------------- */
+
+  const values =
+    Array.isArray(material[field])
+      ? material[field]
+      : [];
+
+
+  if (!values.length) {
+
+    optionList.appendChild(wrapper);
+
+    return;
+
+  }
+
+
+  const select =
+    document.createElement("select");
+
+  select.dataset.field =
+    field;
+
+  const first =
+    document.createElement("option");
+
+  first.value = "";
+
+  first.textContent =
+    t("select") +
+    " " +
+    formatLabel(field);
+
+  select.appendChild(first);
+
+
+  values.forEach(value => {
+
+    const option =
+      document.createElement("option");
+
+    option.value =
+      value;
+
+    option.textContent =
+      value;
+
+    select.appendChild(option);
+
+  });
+
+
+  select.value =
+    selectedOptions[field] || "";
+
+
+  select.addEventListener(
+    "change",
+    () => {
+
+      selectedOptions[field] =
+        select.value;
+
+      updateDependentDisplay();
+
+    }
+  );
+
+
+  wrapper.appendChild(select);
+
+  optionList.appendChild(wrapper);
+
+}
+
+
+/* =========================================================
+   SIZE DISPLAY
+========================================================= */
+
+function buildSizeDisplay(material) {
+
+  if (!material)
+    return "";
+
+  if (
+    material.id === "s4-screw"
+  ) {
+
+    const diameter =
+      selectedOptions.diameter || "";
+
+    const length =
+      selectedOptions.length || "";
+
+    if (!diameter || !length)
+      return "";
+
+    return `${diameter} × ${length}`;
+
+  }
+
+
+  if (
+    material.id === "s4-lug"
+  ) {
+
+    const cable =
+      selectedOptions.cableSize || "";
+
+    const stud =
+      selectedOptions.studSize || "";
+
+    if (!cable || !stud)
+      return "";
+
+    return `${cable} × ${stud}`;
+
+  }
+
+
+  return "";
+
+}
+
+
+/* =========================================================
+   DEPENDENT DISPLAY
+========================================================= */
+
+function updateDependentDisplay() {
+
+  if (!currentMaterial)
+    return;
+
+  const sizeDisplay =
+    optionList.querySelector(
+      'input[placeholder="Diameter × Length"]'
+    );
+
+  if (sizeDisplay) {
+
+    sizeDisplay.value =
+      buildSizeDisplay(currentMaterial);
+
+  }
+
+}
+
+
+/* =========================================================
+   VALIDATE OPTIONS
+========================================================= */
+
+function validateOptionsAndContinue() {
+
+  if (!currentMaterial)
+    return;
+
+
+  const flow =
+    currentMaterial.flow || [];
+
+
+  const fields =
+    flow.filter(field => {
+
+      return (
+        field !== "quantity" &&
+        field !== "unit" &&
+        field !== "brand" &&
+        field !== "sizeDisplay"
       );
 
-    fields.forEach(function (field) {
+    });
 
-      const value =
-        currentValues[field];
+
+  for (const field of fields) {
+
+    const isPending =
+      currentMaterial[field + "Pending"];
+
+    const isUserInput =
+      currentMaterial[field + "UserInput"];
+
+    const isModelDependent =
+      currentMaterial[field + "ModelDependent"];
+
+
+    if (
+      currentMaterial.sizeHidden === true &&
+      field === "size"
+    ) {
+      continue;
+    }
+
+
+    if (
+      currentMaterial.sizeModelDependent === true &&
+      field === "size"
+    ) {
+      continue;
+    }
+
+
+    if (
+      isPending ||
+      isUserInput ||
+      isModelDependent
+    ) {
 
       if (
-        value === undefined ||
-        value === null ||
-        value === ""
+        !selectedOptions[field]
       ) {
+
+        alert(
+          currentLang === "hi"
+            ? `${formatLabel(field)} दर्ज करें।`
+            : `Please enter ${formatLabel(field)}.`
+        );
+
         return;
+
       }
+
+      continue;
+
+    }
+
+
+    if (
+      Array.isArray(
+        currentMaterial[field]
+      ) &&
+      currentMaterial[field].length
+    ) {
+
+      if (
+        !selectedOptions[field]
+      ) {
+
+        alert(
+          currentLang === "hi"
+            ? `${formatLabel(field)} चुनें।`
+            : `Please select ${formatLabel(field)}.`
+        );
+
+        return;
+
+      }
+
+    }
+
+  }
+
+
+  openDetails();
+
+}
+
+
+/* =========================================================
+   DETAILS
+========================================================= */
+
+function openDetails() {
+
+  navigationStack.push({
+    view: "options"
+  });
+
+  hideAllViews();
+
+  detailsView.classList.remove("hidden");
+
+  renderDetails();
+
+  backBtn.classList.remove("hidden");
+
+}
+
+
+/* =========================================================
+   RENDER DETAILS
+========================================================= */
+
+function renderDetails() {
+
+  if (!currentMaterial)
+    return;
+
+
+  const name =
+    currentMaterial.name?.[currentLang]
+    || currentMaterial.name?.en
+    || "Material";
+
+
+  selectedMaterialName.textContent =
+    name;
+
+
+  renderDynamicSummary();
+
+  populateUnits();
+
+  renderBrands();
+
+  quantityInput.value = "";
+
+  rateInput.value = "";
+
+  amountPreview.textContent =
+    "₹0.00";
+
+}
+
+
+/* =========================================================
+   DYNAMIC SUMMARY
+========================================================= */
+
+function renderDynamicSummary() {
+
+  if (!dynamicForm)
+    return;
+
+  dynamicForm.innerHTML = "";
+
+
+  Object.keys(selectedOptions)
+    .forEach(field => {
+
+      if (!selectedOptions[field])
+        return;
+
+      if (
+        field === "sizeDisplay"
+      )
+        return;
+
 
       const row =
         document.createElement("div");
 
       row.className =
-        "selection-summary";
+        "selected-option-row";
 
-      row.innerHTML = `
-        <span>
-          ${getLabel(field)}
-        </span>
 
-        <strong>
-          ${value}
-        </strong>
-      `;
+      const label =
+        document.createElement("span");
+
+      label.textContent =
+        formatLabel(field);
+
+
+      const value =
+        document.createElement("strong");
+
+      value.textContent =
+        selectedOptions[field];
+
+
+      row.appendChild(label);
+
+      row.appendChild(value);
 
       dynamicForm.appendChild(row);
 
     });
 
-  }
+
+  const displaySize =
+    buildSizeDisplay(
+      currentMaterial
+    );
 
 
-  /* =======================================================
-     UNITS
-  ======================================================= */
+  if (displaySize) {
 
-  function renderUnits() {
+    const row =
+      document.createElement("div");
 
-    const select =
-      $("unitSelect");
+    row.className =
+      "selected-option-row";
 
-    if (!select || !currentMaterial)
-      return;
+    row.innerHTML = `
 
-    select.innerHTML = `
-      <option value="">
-        ${
-          currentLang === "hi"
-            ? "यूनिट चुनें"
-            : "Select Unit"
-        }
-      </option>
+      <span>
+        Size
+      </span>
+
+      <strong>
+        ${escapeHTML(displaySize)}
+      </strong>
+
     `;
 
-    const units =
-      currentMaterial.units || [];
+    dynamicForm.appendChild(row);
 
-    units.forEach(function (unit) {
+  }
 
-      const option =
-        document.createElement("option");
+}
 
-      option.value = unit;
-      option.textContent = unit;
 
-      select.appendChild(option);
+/* =========================================================
+   UNITS
+========================================================= */
 
-    });
+function populateUnits() {
+
+  if (!unitSelect)
+    return;
+
+  unitSelect.innerHTML = "";
+
+  const first =
+    document.createElement("option");
+
+  first.value = "";
+
+  first.textContent =
+    t("select") + " " + t("unit");
+
+  unitSelect.appendChild(first);
+
+
+  const units =
+    currentMaterial?.units || [];
+
+
+  units.forEach(unit => {
+
+    const option =
+      document.createElement("option");
+
+    option.value =
+      unit;
+
+    option.textContent =
+      unit;
+
+    unitSelect.appendChild(option);
+
+  });
+
+}
+
+
+/* =========================================================
+   BRAND
+   IMPORTANT:
+   BRAND COMES AFTER QUANTITY + UNIT
+========================================================= */
+
+function handleUnitChange() {
+
+  if (
+    quantityInput.value &&
+    unitSelect.value
+  ) {
+
+    showBrandGroup();
+
+  } else {
+
+    brandGroup.classList.add("hidden");
+
+  }
+
+}
+
+
+function showBrandGroup() {
+
+  if (!currentMaterial)
+    return;
+
+  if (
+    !currentMaterial.flow?.includes("brand")
+  ) {
+
+    brandGroup.classList.add("hidden");
+
+    return;
+
+  }
+
+  brandGroup.classList.remove("hidden");
+
+}
+
+
+function renderBrands() {
+
+  if (!brandSelect)
+    return;
+
+
+  brandSelect.innerHTML = "";
+
+
+  const first =
+    document.createElement("option");
+
+  first.value = "";
+
+  first.textContent =
+    t("selectBrand");
+
+  brandSelect.appendChild(first);
+
+
+  let brands =
+    currentMaterial?.brands;
+
+
+  if (
+    !Array.isArray(brands) ||
+    !brands.length
+  ) {
+
+    brands = [
+
+      "Polycab",
+      "Havells",
+      "Finolex",
+      "RR Kabel",
+      "Anchor",
+      "Legrand",
+      "Schneider",
+      "ABB",
+      "Other Brand",
+      "Non Brand / Local",
+      "Skip Brand"
+
+    ];
 
   }
 
 
-  /* =======================================================
-     BRANDS
-  ======================================================= */
+  brands.forEach(brand => {
 
-  function renderBrands() {
+    const option =
+      document.createElement("option");
 
-    const group =
-      $("brandGroup");
+    option.value =
+      brand;
 
-    const select =
-      $("brandSelect");
+    option.textContent =
+      brand;
 
-    if (!group || !select || !currentMaterial)
-      return;
+    brandSelect.appendChild(option);
 
-    const hasBrand =
-      currentMaterial.flow?.includes("brand");
+  });
 
-    if (!hasBrand) {
 
-      group.classList.add("hidden");
+  if (
+    currentMaterial?.brandMaster
+  ) {
 
-      return;
+    brandGroup.classList.remove(
+      "hidden"
+    );
 
-    }
+  } else {
 
-    group.classList.remove("hidden");
-
-    select.innerHTML = `
-      <option value="">
-        ${
-          currentLang === "hi"
-            ? "ब्रांड चुनें"
-            : "Select Brand"
-        }
-      </option>
-    `;
-
-    const brands =
-      currentMaterial.brands ||
-      [
-        "Polycab",
-        "Havells",
-        "Finolex",
-        "RR Kabel",
-        "Anchor",
-        "Legrand",
-        "Schneider",
-        "ABB",
-        "Other Brand",
-        "Non Brand / Local",
-        "Skip Brand"
-      ];
-
-    brands.forEach(function (brand) {
-
-      const option =
-        document.createElement("option");
-
-      option.value = brand;
-      option.textContent = brand;
-
-      select.appendChild(option);
-
-    });
+    brandGroup.classList.add(
+      "hidden"
+    );
 
   }
 
-
-  /* =======================================================
-     QUANTITY + RATE
-  ======================================================= */
-
-  function resetQuantityRate() {
-
-    const quantity =
-      $("quantityInput");
-
-    const rate =
-      $("rateInput");
-
-    const unit =
-      $("unitSelect");
-
-    const brand =
-      $("brandSelect");
-
-    if (quantity)
-      quantity.value = "";
-
-    if (rate)
-      rate.value = "";
-
-    if (unit)
-      unit.value = "";
-
-    if (brand)
-      brand.value = "";
-
-    updateAmount();
-
-  }
+}
 
 
-  function updateAmount() {
+/* =========================================================
+   BRAND CHANGE
+========================================================= */
 
-    const quantity =
-      parseFloat(
-        $("quantityInput")?.value
-      ) || 0;
+function handleBrandChange() {
 
-    const rate =
-      parseFloat(
-        $("rateInput")?.value
-      ) || 0;
+  /* Brand is final option before Rate */
 
-    const amount =
-      quantity * rate;
+}
 
-    const preview =
-      $("amountPreview");
 
-    if (preview) {
+/* =========================================================
+   AMOUNT
+========================================================= */
 
-      preview.textContent =
-        "₹" +
-        amount.toFixed(2);
+function updateAmount() {
 
-    }
+  const quantity =
+    parseFloat(
+      quantityInput.value
+    ) || 0;
+
+  const rate =
+    parseFloat(
+      rateInput.value
+    ) || 0;
+
+  const amount =
+    quantity * rate;
+
+  amountPreview.textContent =
+    `₹${amount.toFixed(2)}`;
+
+
+  /* Brand appears only after quantity + unit */
+
+  if (
+    quantity > 0 &&
+    unitSelect.value
+  ) {
+
+    showBrandGroup();
 
   }
 
+}
 
-  /* =======================================================
-     ADD TO ESTIMATE
-  ======================================================= */
 
-  function addToEstimate() {
+/* =========================================================
+   ADD TO ESTIMATE
+========================================================= */
 
-    if (!currentMaterial)
-      return;
+function addCurrentToEstimate() {
 
-    const quantity =
-      parseFloat(
-        $("quantityInput")?.value
-      );
+  if (!currentMaterial)
+    return;
 
-    const unit =
-      $("unitSelect")?.value;
 
-    const rate =
-      parseFloat(
-        $("rateInput")?.value
-      );
+  const quantity =
+    parseFloat(
+      quantityInput.value
+    );
 
-    const brand =
-      $("brandSelect")?.value || "";
 
-    if (
-      !quantity ||
-      quantity <= 0
-    ) {
+  const unit =
+    unitSelect.value;
 
-      alert(
-        currentLang === "hi"
-          ? "कृपया मात्रा दर्ज करें"
-          : "Please enter quantity"
-      );
 
-      return;
+  const rate =
+    parseFloat(
+      rateInput.value
+    ) || 0;
 
-    }
 
-    if (!unit) {
-
-      alert(
-        currentLang === "hi"
-          ? "कृपया यूनिट चुनें"
-          : "Please select unit"
-      );
-
-      return;
-
-    }
-
-    if (
-      Number.isNaN(rate) ||
-      rate < 0
-    ) {
-
-      alert(
-        currentLang === "hi"
-          ? "कृपया सही रेट दर्ज करें"
-          : "Please enter a valid rate"
-      );
-
-      return;
-
-    }
-
-    const item = {
-
-      id:
-        Date.now().toString(),
-
-      materialId:
-        currentMaterial.id,
-
-      materialName:
-        getName(currentMaterial),
-
-      values:
-        { ...currentValues },
-
-      quantity,
-      unit,
-      brand,
-      rate,
-
-      amount:
-        quantity * rate
-
-    };
-
-    selectedItems.push(item);
-
-    saveEstimate();
+  if (
+    !quantity ||
+    quantity <= 0
+  ) {
 
     alert(
       currentLang === "hi"
-        ? "मटेरियल Estimate में जोड़ दिया गया"
-        : "Material added to estimate"
+        ? "कृपया Quantity दर्ज करें।"
+        : "Please enter quantity."
     );
 
-    showEstimate();
+    return;
 
   }
 
 
-  /* =======================================================
-     SAVE ESTIMATE
-  ======================================================= */
+  if (!unit) {
 
-  function saveEstimate() {
-
-    localStorage.setItem(
-      "sandeepEstimateItems",
-      JSON.stringify(selectedItems)
+    alert(
+      currentLang === "hi"
+        ? "कृपया Unit चुनें।"
+        : "Please select unit."
     );
+
+    return;
 
   }
 
 
-  /* =======================================================
-     ESTIMATE VIEW
-  ======================================================= */
+  if (
+    currentMaterial.flow?.includes("brand")
+  ) {
 
-  function showEstimate() {
+    if (
+      !brandSelect.value
+    ) {
 
-    hideAllViews();
-
-    if (!estimateView)
-      return;
-
-    estimateView.classList.remove("hidden");
-
-    if (backBtn) {
-      backBtn.classList.remove("hidden");
-    }
-
-    if (sectionTitle) {
-
-      sectionTitle.textContent =
+      alert(
         currentLang === "hi"
-          ? "📋 Estimate"
-          : "📋 Estimate";
+          ? "कृपया Brand चुनें।"
+          : "Please select brand."
+      );
+
+      return;
 
     }
-
-    updateEstimateView();
 
   }
 
 
-  function updateEstimateView() {
+  const brand =
+    currentMaterial.flow?.includes("brand")
+      ? brandSelect.value
+      : "";
 
-    const list =
-      $("selectedItemsList");
 
-    const empty =
-      $("emptyEstimate");
+  const amount =
+    quantity * rate;
 
-    const totalCard =
-      $("totalCard");
 
-    const actions =
-      $("estimateActions");
+  const item = {
 
-    const grandTotal =
-      $("grandTotal");
+    id:
+      Date.now().toString(),
 
-    if (!list)
-      return;
+    materialId:
+      currentMaterial.id,
 
-    list.innerHTML = "";
+    stage:
+      currentMaterial.stage,
 
-    if (!selectedItems.length) {
+    materialName:
+      currentMaterial.name?.en || "",
 
-      if (empty)
-        empty.classList.remove("hidden");
+    materialNameHi:
+      currentMaterial.name?.hi || "",
 
-      if (totalCard)
-        totalCard.classList.add("hidden");
+    options:
+      { ...selectedOptions },
 
-      if (actions)
-        actions.classList.add("hidden");
+    quantity,
 
-      return;
+    unit,
 
-    }
+    brand,
 
-    if (empty)
-      empty.classList.add("hidden");
+    rate,
 
-    let total = 0;
+    amount
 
-    selectedItems.forEach(
-      function (item, index) {
+  };
 
-        total +=
-          Number(item.amount) || 0;
 
-        const card =
-          document.createElement("div");
+  selectedItems.push(item);
 
-        card.className =
-          "estimate-item";
+  saveEstimate();
 
-        const options =
-          Object.entries(
-            item.values || {}
-          )
-          .map(
-            ([key, value]) =>
-              `<small>${getLabel(key)}: ${value}</small>`
-          )
-          .join("");
+  alert(t("saved"));
 
-        card.innerHTML = `
-          <div class="estimate-item-main">
+  showEstimate();
 
-            <strong>
-              ${index + 1}. ${item.materialName}
-            </strong>
+}
 
-            <div class="estimate-options">
-              ${options}
-            </div>
 
-            <small>
-              ${item.quantity}
-              ${item.unit}
-              ${
-                item.brand
-                  ? " • " + item.brand
-                  : ""
-              }
-            </small>
+/* =========================================================
+   SAVE ESTIMATE
+========================================================= */
 
-          </div>
+function saveEstimate() {
 
-          <div class="estimate-item-right">
+  localStorage.setItem(
+    "sandeepEstimateItems",
+    JSON.stringify(
+      selectedItems
+    )
+  );
 
-            <strong>
-              ₹${Number(item.amount).toFixed(2)}
-            </strong>
+}
 
-            <button
-              type="button"
-              class="delete-estimate-item"
-              data-id="${item.id}"
-            >
-              ×
-            </button>
 
-          </div>
-        `;
+/* =========================================================
+   ESTIMATE VIEW
+========================================================= */
 
-        list.appendChild(card);
+function showEstimate() {
 
-      }
+  currentStage = null;
+  currentMaterial = null;
+
+  selectedOptions = {};
+
+  navigationStack = [];
+
+  hideAllViews();
+
+  estimateView.classList.remove(
+    "hidden"
+  );
+
+  sectionTitle.textContent =
+    "📋 " + t("estimate");
+
+  backBtn.classList.add("hidden");
+
+  setActiveNav("estimate");
+
+  updateEstimateView();
+
+}
+
+
+/* =========================================================
+   UPDATE ESTIMATE
+========================================================= */
+
+function updateEstimateView() {
+
+  if (!selectedItemsList)
+    return;
+
+
+  selectedItemsList.innerHTML = "";
+
+
+  if (!selectedItems.length) {
+
+    emptyEstimate.classList.remove(
+      "hidden"
     );
 
+    totalCard.classList.add(
+      "hidden"
+    );
 
-    if (totalCard)
-      totalCard.classList.remove("hidden");
+    estimateActions.classList.add(
+      "hidden"
+    );
 
-    if (actions)
-      actions.classList.remove("hidden");
+    return;
 
-    if (grandTotal) {
+  }
 
-      grandTotal.textContent =
-        "₹" + total.toFixed(2);
 
-    }
+  emptyEstimate.classList.add(
+    "hidden"
+  );
 
-    document
-      .querySelectorAll(
-        ".delete-estimate-item"
+  totalCard.classList.remove(
+    "hidden"
+  );
+
+  estimateActions.classList.remove(
+    "hidden"
+  );
+
+
+  let total = 0;
+
+
+  selectedItems.forEach(
+    (item, index) => {
+
+      total +=
+        Number(item.amount) || 0;
+
+
+      const card =
+        document.createElement("div");
+
+      card.className =
+        "estimate-item";
+
+
+      const name =
+        currentLang === "hi"
+          ? item.materialNameHi
+          : item.materialName;
+
+
+      let optionsHTML = "";
+
+
+      Object.entries(
+        item.options || {}
       )
       .forEach(
-        function (button) {
+        ([key, value]) => {
 
-          button.addEventListener(
-            "click",
-            function () {
+          if (!value)
+            return;
 
-              const id =
-                button.dataset.id;
+          optionsHTML += `
 
-              selectedItems =
-                selectedItems.filter(
-                  item =>
-                    item.id !== id
-                );
+            <span>
+              ${escapeHTML(
+                formatLabel(key)
+              )}: 
+              ${escapeHTML(
+                String(value)
+              )}
+            </span>
 
-              saveEstimate();
+          `;
 
-              updateEstimateView();
+        }
+      );
 
-            }
+
+      card.innerHTML = `
+
+        <div class="estimate-item-header">
+
+          <strong>
+            ${escapeHTML(name)}
+          </strong>
+
+          <span>
+            #${index + 1}
+          </span>
+
+        </div>
+
+        <div class="estimate-item-options">
+          ${optionsHTML}
+        </div>
+
+        <div class="estimate-item-bottom">
+
+          <span>
+            ${t("quantity")}:
+            ${item.quantity}
+            ${escapeHTML(item.unit)}
+          </span>
+
+          <span>
+            ₹${Number(item.rate).toFixed(2)}
+          </span>
+
+          <strong>
+            ₹${Number(item.amount).toFixed(2)}
+          </strong>
+
+        </div>
+
+        <div class="estimate-item-actions">
+
+          <button
+            type="button"
+            data-edit="${item.id}"
+          >
+            ✏️ ${t("edit")}
+          </button>
+
+          <button
+            type="button"
+            data-delete="${item.id}"
+          >
+            🗑️ ${t("delete")}
+          </button>
+
+        </div>
+
+      `;
+
+
+      const editButton =
+        card.querySelector(
+          `[data-edit="${item.id}"]`
+        );
+
+
+      const deleteButton =
+        card.querySelector(
+          `[data-delete="${item.id}"]`
+        );
+
+
+      editButton?.addEventListener(
+        "click",
+        () => editEstimateItem(item.id)
+      );
+
+
+      deleteButton?.addEventListener(
+        "click",
+        () => deleteEstimateItem(item.id)
+      );
+
+
+      selectedItemsList.appendChild(
+        card
+      );
+
+    }
+  );
+
+
+  grandTotal.textContent =
+    `₹${total.toFixed(2)}`;
+
+}
+
+
+/* =========================================================
+   EDIT ESTIMATE ITEM
+========================================================= */
+
+function editEstimateItem(id) {
+
+  const item =
+    selectedItems.find(
+      x => x.id === id
+    );
+
+
+  if (!item)
+    return;
+
+
+  const material =
+    getMaterialById(
+      item.materialId
+    );
+
+
+  if (!material)
+    return;
+
+
+  selectedItems =
+    selectedItems.filter(
+      x => x.id !== id
+    );
+
+
+  saveEstimate();
+
+
+  currentStage =
+    material.stage;
+
+  currentMaterial =
+    material;
+
+  selectedOptions =
+    { ...(item.options || {}) };
+
+
+  hideAllViews();
+
+  detailsView.classList.remove(
+    "hidden"
+  );
+
+
+  selectedMaterialName.textContent =
+    currentLang === "hi"
+      ? material.name.hi
+      : material.name.en;
+
+
+  renderDynamicSummary();
+
+  populateUnits();
+
+  renderBrands();
+
+
+  quantityInput.value =
+    item.quantity;
+
+
+  unitSelect.value =
+    item.unit;
+
+
+  rateInput.value =
+    item.rate;
+
+
+  if (
+    brandSelect &&
+    item.brand
+  ) {
+
+    brandSelect.value =
+      item.brand;
+
+    brandGroup.classList.remove(
+      "hidden"
+    );
+
+  }
+
+
+  updateAmount();
+
+  backBtn.classList.remove(
+    "hidden"
+  );
+
+
+  sectionTitle.textContent =
+    currentLang === "hi"
+      ? material.name.hi
+      : material.name.en;
+
+}
+
+
+/* =========================================================
+   DELETE
+========================================================= */
+
+function deleteEstimateItem(id) {
+
+  if (
+    !confirm(t("confirmDelete"))
+  ) {
+
+    return;
+
+  }
+
+
+  selectedItems =
+    selectedItems.filter(
+      item => item.id !== id
+    );
+
+
+  saveEstimate();
+
+  updateEstimateView();
+
+}
+
+
+/* =========================================================
+   CLEAR ESTIMATE
+========================================================= */
+
+function clearEstimate() {
+
+  if (
+    !selectedItems.length
+  ) {
+
+    return;
+
+  }
+
+
+  if (
+    !confirm(
+      t("confirmClear")
+    )
+  ) {
+
+    return;
+
+  }
+
+
+  selectedItems = [];
+
+  saveEstimate();
+
+  updateEstimateView();
+
+}
+
+
+/* =========================================================
+   FINAL ESTIMATE
+========================================================= */
+
+function showFinalEstimate() {
+
+  if (!selectedItems.length) {
+
+    alert(
+      currentLang === "hi"
+        ? "Estimate खाली है।"
+        : "Estimate is empty."
+    );
+
+    return;
+
+  }
+
+
+  let total = 0;
+
+
+  let html = `
+
+    <div class="final-estimate">
+
+      <h2>
+        ${t("finalTitle")}
+      </h2>
+
+      <div class="final-company">
+        Sandeep ElectroFix
+      </div>
+
+      <hr>
+
+  `;
+
+
+  selectedItems.forEach(
+    (item, index) => {
+
+      total +=
+        Number(item.amount) || 0;
+
+
+      const name =
+        currentLang === "hi"
+          ? item.materialNameHi
+          : item.materialName;
+
+
+      html += `
+
+        <div class="final-item">
+
+          <strong>
+            ${index + 1}.
+            ${escapeHTML(name)}
+          </strong>
+
+          <div>
+            ${item.quantity}
+            ${escapeHTML(item.unit)}
+            ×
+            ₹${Number(item.rate).toFixed(2)}
+          </div>
+
+          <div>
+            ₹${Number(item.amount).toFixed(2)}
+          </div>
+
+        </div>
+
+      `;
+
+    }
+  );
+
+
+  html += `
+
+      <hr>
+
+      <div class="final-total">
+
+        <strong>
+          ${t("total")}
+        </strong>
+
+        <strong>
+          ₹${total.toFixed(2)}
+        </strong>
+
+      </div>
+
+    </div>
+
+  `;
+
+
+  openPopup(
+    t("finalTitle"),
+    html
+  );
+
+}
+
+
+/* =========================================================
+   SEARCH
+========================================================= */
+
+function handleSearch() {
+
+  const query =
+    searchInput?.value || "";
+
+
+  if (!query.trim()) {
+
+    if (currentStage) {
+
+      renderMaterials(
+        currentStage
+      );
+
+    } else {
+
+      showHome();
+
+    }
+
+    return;
+
+  }
+
+
+  hideAllViews();
+
+  materialList.classList.remove(
+    "hidden"
+  );
+
+
+  let materials;
+
+
+  if (
+    typeof searchMaterials ===
+    "function"
+  ) {
+
+    materials =
+      searchMaterials(query);
+
+  } else {
+
+    materials =
+      window.ESTIMATE_LIST.filter(
+        material => {
+
+          const en =
+            material.name?.en
+              ?.toLowerCase() || "";
+
+          const hi =
+            material.name?.hi
+              ?.toLowerCase() || "";
+
+          const q =
+            query
+              .toLowerCase()
+              .trim();
+
+          return (
+            en.includes(q) ||
+            hi.includes(q)
           );
 
         }
@@ -1527,24 +2662,427 @@
   }
 
 
-  /* =======================================================
-     CLEAR ESTIMATE
-  ======================================================= */
+  renderSearchResults(
+    materials
+  );
 
-  function clearEstimate() {
+}
 
-    if (!selectedItems.length)
-      return;
 
-    const confirmed =
-      confirm(
-        currentLang === "hi"
-          ? "क्या आप पूरा estimate साफ करना चाहते हैं?"
-          : "Clear the complete estimate?"
+function renderSearchResults(
+  materials
+) {
+
+  materialList.innerHTML = "";
+
+
+  if (!materials.length) {
+
+    materialList.innerHTML = `
+
+      <div class="empty-state">
+
+        <div class="empty-icon">
+          🔍
+        </div>
+
+        <h4>
+          ${t("noMaterials")}
+        </h4>
+
+      </div>
+
+    `;
+
+    return;
+
+  }
+
+
+  materials.forEach(material => {
+
+    const card =
+      document.createElement("button");
+
+    card.type = "button";
+
+    card.className =
+      "material-card";
+
+
+    const name =
+      material.name?.[currentLang]
+      || material.name?.en;
+
+
+    card.innerHTML = `
+
+      <div class="material-card-icon">
+        ⚡
+      </div>
+
+      <div class="material-card-content">
+
+        <strong>
+          ${escapeHTML(name)}
+        </strong>
+
+        <small>
+          ${escapeHTML(
+            getStageName(
+              material.stage
+            )
+          )}
+        </small>
+
+      </div>
+
+      <span>
+        ›
+      </span>
+
+    `;
+
+
+    card.addEventListener(
+      "click",
+      () => openMaterial(
+        material
+      )
+    );
+
+
+    materialList.appendChild(
+      card
+    );
+
+  });
+
+}
+
+
+/* =========================================================
+   BACK NAVIGATION
+========================================================= */
+
+function goBack() {
+
+  if (
+    currentMaterial &&
+    detailsView &&
+    !detailsView.classList.contains(
+      "hidden"
+    )
+  ) {
+
+    hideAllViews();
+
+    optionList.classList.remove(
+      "hidden"
+    );
+
+    renderOptionView();
+
+    sectionTitle.textContent =
+      currentMaterial.name?.[currentLang]
+      || currentMaterial.name?.en;
+
+    return;
+
+  }
+
+
+  if (
+    currentMaterial &&
+    optionList &&
+    !optionList.classList.contains(
+      "hidden"
+    )
+  ) {
+
+    currentMaterial = null;
+
+    selectedOptions = {};
+
+    hideAllViews();
+
+    materialList.classList.remove(
+      "hidden"
+    );
+
+    renderMaterials(
+      currentStage
+    );
+
+    sectionTitle.textContent =
+      getStageName(
+        currentStage
       );
 
-    if (!confirmed)
-      return;
+    return;
+
+  }
+
+
+  if (currentStage) {
+
+    currentStage = null;
+
+    currentMaterial = null;
+
+    selectedOptions = {};
+
+    showHome();
+
+    return;
+
+  }
+
+
+  showHome();
+
+}
+
+
+/* =========================================================
+   ANDROID / BROWSER BACK
+========================================================= */
+
+window.addEventListener(
+  "popstate",
+  () => {
+
+    goBack();
+
+  }
+);
+
+
+/* =========================================================
+   NAVIGATION
+========================================================= */
+
+function handleNavigation(nav) {
+
+  switch (nav) {
+
+    case "home":
+      showHome();
+      break;
+
+    case "stages":
+
+      if (currentStage) {
+
+        openStage(
+          currentStage
+        );
+
+      } else {
+
+        showHome();
+
+      }
+
+      break;
+
+    case "estimate":
+      showEstimate();
+      break;
+
+    case "settings":
+      showSettings();
+      break;
+
+  }
+
+}
+
+
+function setActiveNav(nav) {
+
+  document
+    .querySelectorAll(".nav-item")
+    .forEach(button => {
+
+      button.classList.toggle(
+        "active",
+        button.dataset.nav === nav
+      );
+
+    });
+
+}
+
+
+/* =========================================================
+   SETTINGS
+========================================================= */
+
+function showSettings() {
+
+  hideAllViews();
+
+  sectionTitle.textContent =
+    "⚙️ Settings";
+
+  backBtn.classList.add(
+    "hidden"
+  );
+
+  setActiveNav("settings");
+
+
+  if (stageList) {
+
+    stageList.classList.remove(
+      "hidden"
+    );
+
+
+    stageList.innerHTML = `
+
+      <div class="details-card">
+
+        <h3>
+          ⚙️ Settings
+        </h3>
+
+        <div class="form-group">
+
+          <label>
+            Language
+          </label>
+
+          <button
+            type="button"
+            class="secondary-btn"
+            id="settingsLanguageBtn"
+          >
+            ${
+              currentLang === "hi"
+                ? "Hindi"
+                : "English"
+            }
+          </button>
+
+        </div>
+
+        <div class="form-group">
+
+          <label>
+            Estimate Items
+          </label>
+
+          <strong>
+            ${selectedItems.length}
+          </strong>
+
+        </div>
+
+      </div>
+
+    `;
+
+
+    document
+      .getElementById(
+        "settingsLanguageBtn"
+      )
+      ?.addEventListener(
+        "click",
+        toggleLanguage
+      );
+
+  }
+
+}
+
+
+/* =========================================================
+   POPUP
+========================================================= */
+
+function openPopup(
+  title,
+  content
+) {
+
+  if (!popupOverlay)
+    return;
+
+
+  popupTitle.textContent =
+    title;
+
+
+  popupContent.innerHTML =
+    content;
+
+
+  popupOverlay.classList.remove(
+    "hidden"
+  );
+
+}
+
+
+function closePopup() {
+
+  if (!popupOverlay)
+    return;
+
+  popupOverlay.classList.add(
+    "hidden"
+  );
+
+}
+
+
+/* =========================================================
+   ESCAPE HTML
+========================================================= */
+
+function escapeHTML(value) {
+
+  return String(value ?? "")
+    .replace(
+      /&/g,
+      "&amp;"
+    )
+    .replace(
+      /</g,
+      "&lt;"
+    )
+    .replace(
+      />/g,
+      "&gt;"
+    )
+    .replace(
+      /"/g,
+      "&quot;"
+    )
+    .replace(
+      /'/g,
+      "&#039;"
+    );
+
+}
+
+
+/* =========================================================
+   GLOBAL DEBUG HELPERS
+========================================================= */
+
+window.ProjectList = {
+
+  getItems() {
+
+    return selectedItems;
+
+  },
+
+  clear() {
 
     selectedItems = [];
 
@@ -1552,555 +3090,38 @@
 
     updateEstimateView();
 
-  }
+  },
 
+  refresh() {
 
-  /* =======================================================
-     SEARCH
-  ======================================================= */
+    updateMaterialCount();
 
-  function performSearch() {
-
-    const query =
-      searchInput?.value.trim() || "";
-
-    if (!query) {
-
-      renderStages();
-
-      return;
-
-    }
-
-    hideAllViews();
-
-    if (!materialList)
-      return;
-
-    materialList.classList.remove("hidden");
-
-    if (backBtn)
-      backBtn.classList.remove("hidden");
-
-    if (sectionTitle) {
-
-      sectionTitle.textContent =
-        currentLang === "hi"
-          ? "🔍 खोज परिणाम"
-          : "🔍 Search Results";
-
-    }
-
-    const materials =
-      window.searchMaterials
-        ? window.searchMaterials(query)
-        : [];
-
-    materialList.innerHTML = "";
-
-    if (!materials.length) {
-
-      materialList.innerHTML = `
-        <div class="empty-state">
-
-          <div class="empty-icon">
-            🔍
-          </div>
-
-          <h4>
-            ${
-              currentLang === "hi"
-                ? "कोई मटेरियल नहीं मिला"
-                : "No material found"
-            }
-          </h4>
-
-        </div>
-      `;
-
-      return;
-
-    }
-
-    materials.forEach(function (material) {
-
-      const card =
-        document.createElement("button");
-
-      card.type = "button";
-      card.className = "material-card";
-
-      card.innerHTML = `
-        <div class="material-icon">🔌</div>
-
-        <div class="material-content">
-
-          <strong>
-            ${getName(material)}
-          </strong>
-
-          <small>
-            ${
-              material.stage
-                .replace("stage", "Stage ")
-            }
-          </small>
-
-        </div>
-
-        <span class="material-arrow">›</span>
-      `;
-
-      card.addEventListener(
-        "click",
-        function () {
-
-          openMaterial(material);
-
-        }
-      );
-
-      materialList.appendChild(card);
-
-    });
+    showHome();
 
   }
 
-
-  /* =======================================================
-     BACK BUTTON
-  ======================================================= */
-
-  function goBack() {
-
-    if (
-      currentMaterial &&
-      optionList &&
-      !optionList.classList.contains("hidden")
-    ) {
-
-      const flow =
-        currentMaterial.flow || [];
-
-      const currentStep =
-        navigationStack
-          .filter(
-            item =>
-              item.startsWith("step:")
-          )
-          .pop();
-
-      if (currentStep) {
-
-        navigationStack.pop();
-
-        const previous =
-          navigationStack
-            .filter(
-              item =>
-                item.startsWith("step:")
-            )
-            .pop();
-
-        if (previous) {
-
-          renderOptionStep(
-            previous.replace(
-              "step:",
-              ""
-            )
-          );
-
-          return;
-
-        }
-
-      }
-
-      renderMaterials(
-        currentStage
-      );
-
-      return;
-
-    }
-
-
-    if (
-      currentMaterial &&
-      detailsView &&
-      !detailsView.classList.contains("hidden")
-    ) {
-
-      currentMaterial = null;
-
-      renderMaterials(
-        currentStage
-      );
-
-      return;
-
-    }
-
-
-    if (
-      currentStage &&
-      materialList &&
-      !materialList.classList.contains("hidden")
-    ) {
-
-      currentStage = null;
-
-      renderStages();
-
-      return;
-
-    }
-
-
-    renderStages();
-
-  }
-
-
-  /* =======================================================
-     LANGUAGE TOGGLE
-  ======================================================= */
-
-  function toggleLanguage() {
-
-    currentLang =
-      currentLang === "hi"
-        ? "en"
-        : "hi";
-
-    localStorage.setItem(
-      "sandeepMaterialLang",
-      currentLang
-    );
-
-    if (languageBtn) {
-
-      languageBtn.textContent =
-        currentLang === "hi"
-          ? "EN"
-          : "HI";
-
-    }
-
-    if (pageTitle) {
-
-      pageTitle.textContent =
-        currentLang === "hi"
-          ? "Project List"
-          : "Project List";
-
-    }
-
-    renderStages();
-
-  }
-
-
-  /* =======================================================
-     FINAL ESTIMATE
-  ======================================================= */
-
-  function finalEstimate() {
-
-    if (!selectedItems.length) {
-
-      alert(
-        currentLang === "hi"
-          ? "पहले material estimate में जोड़ें"
-          : "Add materials to the estimate first"
-      );
-
-      return;
-
-    }
-
-    let text =
-      "SANDEEP ELECTROFIX\n";
-
-    text +=
-      "PROJECT ESTIMATE\n\n";
-
-    selectedItems.forEach(
-      function (item, index) {
-
-        text +=
-          `${index + 1}. ${item.materialName}\n`;
-
-        Object.entries(
-          item.values || {}
-        )
-        .forEach(
-          ([key, value]) => {
-
-            text +=
-              `${getLabel(key)}: ${value}\n`;
-
-          }
-        );
-
-        text +=
-          `Qty: ${item.quantity} ${item.unit}\n`;
-
-        if (item.brand) {
-
-          text +=
-            `Brand: ${item.brand}\n`;
-
-        }
-
-        text +=
-          `Rate: ₹${Number(item.rate).toFixed(2)}\n`;
-
-        text +=
-          `Amount: ₹${Number(item.amount).toFixed(2)}\n\n`;
-
-      }
-    );
-
-    const total =
-      selectedItems.reduce(
-        (sum, item) =>
-          sum + (Number(item.amount) || 0),
-        0
-      );
-
-    text +=
-      `GRAND TOTAL: ₹${total.toFixed(2)}`;
-
-    alert(text);
-
-  }
-
-
-  /* =======================================================
-     EVENT LISTENERS
-  ======================================================= */
-
-  if (languageBtn) {
-
-    languageBtn.addEventListener(
-      "click",
-      toggleLanguage
-    );
-
-  }
-
-
-  if (estimateBtn) {
-
-    estimateBtn.addEventListener(
-      "click",
-      showEstimate
-    );
-
-  }
-
-
-  if (backBtn) {
-
-    backBtn.addEventListener(
-      "click",
-      goBack
-    );
-
-  }
-
-
-  if (searchInput) {
-
-    searchInput.addEventListener(
-      "input",
-      performSearch
-    );
-
-  }
-
-
-  if (clearSearch) {
-
-    clearSearch.addEventListener(
-      "click",
-      function () {
-
-        if (searchInput)
-          searchInput.value = "";
-
-        renderStages();
-
-      }
-    );
-
-  }
-
-
-  const addEstimateBtn =
-    $("addEstimateBtn");
-
-  if (addEstimateBtn) {
-
-    addEstimateBtn.addEventListener(
-      "click",
-      addToEstimate
-    );
-
-  }
-
-
-  const quantityInput =
-    $("quantityInput");
-
-  const rateInput =
-    $("rateInput");
-
-  if (quantityInput) {
-
-    quantityInput.addEventListener(
-      "input",
-      updateAmount
-    );
-
-  }
-
-  if (rateInput) {
-
-    rateInput.addEventListener(
-      "input",
-      updateAmount
-    );
-
-  }
-
-
-  const clearEstimateBtn =
-    $("clearEstimateBtn");
-
-  if (clearEstimateBtn) {
-
-    clearEstimateBtn.addEventListener(
-      "click",
-      clearEstimate
-    );
-
-  }
-
-
-  const finalEstimateBtn =
-    $("finalEstimateBtn");
-
-  if (finalEstimateBtn) {
-
-    finalEstimateBtn.addEventListener(
-      "click",
-      finalEstimate
-    );
-
-  }
-
-
-  /* =======================================================
-     BOTTOM NAVIGATION
-  ======================================================= */
-
-  document
-    .querySelectorAll(".nav-item")
-    .forEach(
-      function (button) {
-
-        button.addEventListener(
-          "click",
-          function () {
-
-            const nav =
-              button.dataset.nav;
-
-            document
-              .querySelectorAll(".nav-item")
-              .forEach(
-                item =>
-                  item.classList.remove(
-                    "active"
-                  )
-              );
-
-            button.classList.add(
-              "active"
-            );
-
-
-            if (nav === "home") {
-
-              renderStages();
-
-            }
-
-            else if (nav === "stages") {
-
-              renderStages();
-
-            }
-
-            else if (nav === "estimate") {
-
-              showEstimate();
-
-            }
-
-            else if (nav === "settings") {
-
-              alert(
-                currentLang === "hi"
-                  ? "Settings आगे जोड़े जाएंगे।"
-                  : "Settings will be added next."
-              );
-
-            }
-
-          }
-        );
-
-      }
-    );
-
-
-  /* =======================================================
-     BROWSER / ANDROID BACK
-  ======================================================= */
-
-  window.addEventListener(
-    "popstate",
-    function () {
-
-      goBack();
-
-    }
-  );
-
-
-  /* =======================================================
-     START APP
-  ======================================================= */
-
-  if (
-    document.readyState === "complete"
-  ) {
-
-    startLoading();
-
-  } else {
-
-    window.addEventListener(
-      "load",
-      startLoading,
-      { once: true }
-    );
-
-  }
-
-
-})();
+};
+
+
+/* =========================================================
+   DATABASE STATUS
+========================================================= */
+
+console.log(
+  "Sandeep ElectroFix — Project List Engine Loaded"
+);
+
+console.log(
+  "Language:",
+  currentLang
+);
+
+console.log(
+  "Materials:",
+  window.ESTIMATE_LIST?.length || 0
+);
+
+console.log(
+  "Estimate Items:",
+  selectedItems.length
+);
