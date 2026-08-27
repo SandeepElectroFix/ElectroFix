@@ -2637,7 +2637,7 @@ window.ESTIMATE_LIST = [
       "gm",
       "kg"
     ]
-  }
+  },
 
   /* =======================================================
      STAGE 5 — FALSE CEILING WIRING
