@@ -4,17 +4,28 @@
    MAIN JAVASCRIPT
 ========================================================= */
 
-document.addEventListener("DOMContentLoaded", () => {
 
-    const loadingScreen = document.getElementById("loading-screen");
 
-    if (!loadingScreen) {
-        console.warn("Loading screen not found");
-        return;
+
+
+window.addEventListener("load", () => {
+
+  const loadingScreen =
+    document.getElementById("loading-screen");
+
+  const app =
+    document.getElementById("app");
+
+  setTimeout(() => {
+
+    if (loadingScreen) {
+      loadingScreen.classList.add("hidden");
     }
 
-    setTimeout(() => {
-        loadingScreen.classList.add("hidden");
-    }, 700);
+    if (app) {
+      app.classList.remove("hidden");
+    }
+
+  }, 700);
 
 });
