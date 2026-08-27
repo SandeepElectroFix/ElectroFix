@@ -2639,6 +2639,563 @@ window.ESTIMATE_LIST = [
     ]
   }
 
+  /* =======================================================
+     STAGE 5 — FALSE CEILING WIRING
+     STATUS: FALSE / HIDDEN
+  ======================================================= */
+
+  {
+    id: "s5-wire",
+    stage: "stage5",
+    enabled: false,
+    name: {
+      en: "Wire",
+      hi: "वायर"
+    },
+    flow: [
+      "type",
+      "size",
+      "colour",
+      "quantity",
+      "unit",
+      "brand"
+    ],
+    type: [
+      "FR",
+      "HRFR",
+      "FRLS",
+      "Flexible Wire"
+    ],
+    size: [
+      "0.75 Sqmm",
+      "1 Sqmm",
+      "1.5 Sqmm",
+      "2.5 Sqmm",
+      "4 Sqmm",
+      "6 Sqmm",
+      "10 Sqmm"
+    ],
+    colours: [
+      "Red",
+      "Black",
+      "Yellow",
+      "Blue",
+      "Green",
+      "White",
+      "Grey"
+    ],
+    units: [
+      "mtr",
+      "bndl",
+      "roll"
+    ]
+  },
+
+
+  {
+    id: "s5-electrical-tape",
+    stage: "stage5",
+    enabled: false,
+    name: {
+      en: "Electrical Tape",
+      hi: "इलेक्ट्रिकल टेप"
+    },
+    flow: [
+      "colour",
+      "quantity",
+      "unit",
+      "brand"
+    ],
+    colours: [
+      "Red",
+      "Black",
+      "Yellow",
+      "Blue",
+      "Green",
+      "White",
+      "Grey"
+    ],
+    units: [
+      "pcs",
+      "bx",
+      "doz"
+    ]
+  },
+
+
+  {
+    id: "s5-flexible-pipe",
+    stage: "stage5",
+    enabled: false,
+    name: {
+      en: "Flexible Pipe",
+      hi: "फ्लेक्सिबल पाइप"
+    },
+    flow: [
+      "type",
+      "size",
+      "quantity",
+      "unit",
+      "brand"
+    ],
+    type: [
+      "PVC",
+      "FMC (GI/SM)",
+      "LFMC"
+    ],
+    size: [
+      "16mm",
+      "20mm",
+      "25mm",
+      "32mm"
+    ],
+    units: [
+      "mtr",
+      "bndl"
+    ]
+  },
+
+
+  {
+    id: "s5-pipe",
+    stage: "stage5",
+    enabled: false,
+    name: {
+      en: "Pipe",
+      hi: "पाइप"
+    },
+    flow: [
+      "type",
+      "size",
+      "quantity",
+      "unit",
+      "brand"
+    ],
+    type: [
+      "Heavy",
+      "Medium",
+      "Light"
+    ],
+    size: [
+      "20mm",
+      "25mm",
+      "32mm",
+      "40mm"
+    ],
+    units: [
+      "pcs",
+      "bndl",
+      "doz"
+    ]
+  },
+
+
+  {
+    id: "s5-bend",
+    stage: "stage5",
+    enabled: false,
+    name: {
+      en: "Bend",
+      hi: "बेंड"
+    },
+    flow: [
+      "type",
+      "subType",
+      "size",
+      "quantity",
+      "unit",
+      "brand"
+    ],
+    type: [
+      "Heavy",
+      "Medium",
+      "Light"
+    ],
+    subType: [
+      "Short Bend",
+      "Long Bend"
+    ],
+    size: [
+      "20mm",
+      "25mm",
+      "32mm",
+      "40mm"
+    ],
+    units: [
+      "pcs",
+      "pkt",
+      "doz"
+    ]
+  },
+
+
+  {
+    id: "s5-junction-box",
+    stage: "stage5",
+    enabled: false,
+    name: {
+      en: "Junction Box",
+      hi: "जंक्शन बॉक्स"
+    },
+    flow: [
+      "type",
+      "shape",
+      "material",
+      "conduitSize",
+      "quantity",
+      "unit",
+      "brand"
+    ],
+    type: [
+      "Normal Junction Box",
+      "Deep Junction Box"
+    ],
+    shape: [
+      "1 Way",
+      "2 Way Straight",
+      "2 Way Angle",
+      "3 Way T-Type",
+      "4 Way Cross Type",
+      "Y-Type",
+      "H-Type",
+      "U-Type",
+      "V-Type"
+    ],
+    material: [
+      "PVC",
+      "GI Metal"
+    ],
+    conduitSize: [
+      "20mm",
+      "25mm"
+    ],
+    units: [
+      "pcs",
+      "pkt",
+      "doz"
+    ]
+  },
+
+
+  {
+    id: "s5-cable-tie",
+    stage: "stage5",
+    enabled: false,
+    name: {
+      en: "Cable Tie / Zip Tie",
+      hi: "केबल टाई / जिप टाई"
+    },
+    flow: [
+      "size",
+      "quantity",
+      "unit",
+      "brand"
+    ],
+    size: [
+      "100mm",
+      "150mm",
+      "200mm",
+      "250mm",
+      "300mm",
+      "400mm"
+    ],
+    units: [
+      "pcs",
+      "pkt"
+    ]
+  },
+
+
+  {
+    id: "s5-cable-clip",
+    stage: "stage5",
+    enabled: false,
+    name: {
+      en: "Cable Clip",
+      hi: "केबल क्लिप"
+    },
+    flow: [
+      "size",
+      "quantity",
+      "unit",
+      "brand"
+    ],
+    size: [
+      "4mm",
+      "6mm",
+      "8mm",
+      "10mm",
+      "12mm",
+      "14mm",
+      "16mm",
+      "20mm",
+      "25mm",
+      "32mm"
+    ],
+    units: [
+      "pcs",
+      "pkt"
+    ]
+  },
+
+
+  {
+    id: "s5-saddle",
+    stage: "stage5",
+    enabled: false,
+    name: {
+      en: "Saddle",
+      hi: "सैडल"
+    },
+    flow: [
+      "type",
+      "size",
+      "quantity",
+      "unit",
+      "brand"
+    ],
+    type: [
+      "PVC Saddle",
+      "Metal Saddle"
+    ],
+    size: [
+      "16mm",
+      "20mm",
+      "25mm",
+      "32mm",
+      "40mm"
+    ],
+    units: [
+      "pcs",
+      "pkt"
+    ]
+  },
+
+
+  {
+    id: "s5-fastener",
+    stage: "stage5",
+    enabled: false,
+    name: {
+      en: "Fastener",
+      hi: "फास्टनर"
+    },
+    flow: [
+      "type",
+      "size",
+      "quantity",
+      "unit",
+      "brand"
+    ],
+    type: [
+      "Wedge Anchor Fastener",
+      "Pin Type Anchor",
+      "Rawl Anchor Bolt",
+      "Drop In Anchor",
+      "J Hook Anchor",
+      "Round Anchor Bolt"
+    ],
+    size: [
+      "M4",
+      "M5",
+      "M6",
+      "M8",
+      "M10",
+      "M12",
+      "M16",
+      "M20"
+    ],
+    units: [
+      "pcs",
+      "bx",
+      "doz"
+    ]
+  },
+
+
+  {
+    id: "s5-fan-rod",
+    stage: "stage5",
+    enabled: false,
+    name: {
+      en: "Fan Rod",
+      hi: "फैन रॉड"
+    },
+    flow: [
+      "size",
+      "quantity",
+      "unit",
+      "brand"
+    ],
+    size: [
+      '9"',
+      '12"',
+      '15"',
+      '18"',
+      '24"',
+      '30"',
+      '36"',
+      '42"',
+      '48"'
+    ],
+    units: [
+      "pcs"
+    ]
+  },
+
+
+  {
+    id: "s5-fan-clamp",
+    stage: "stage5",
+    enabled: false,
+    name: {
+      en: "Fan Clamp",
+      hi: "फैन क्लैंप"
+    },
+    flow: [
+      "type",
+      "quantity",
+      "unit",
+      "brand"
+    ],
+    type: [
+      "Heavy",
+      "Normal"
+    ],
+    units: [
+      "pcs"
+    ]
+  },
+
+
+  {
+    id: "s5-wall-plug",
+    stage: "stage5",
+    enabled: false,
+    name: {
+      en: "PVC Wall Plug / Gulli / Gitti",
+      hi: "PVC वॉल प्लग / गुल्ली / गिट्टी"
+    },
+    flow: [
+      "size",
+      "quantity",
+      "unit",
+      "brand"
+    ],
+    size: [
+      "5mm",
+      "6mm",
+      "8mm",
+      "10mm",
+      "12mm"
+    ],
+    units: [
+      "pcs",
+      "pkt",
+      "box"
+    ]
+  },
+
+
+  {
+    id: "s5-screw",
+    stage: "stage5",
+    enabled: false,
+    name: {
+      en: "Screw",
+      hi: "स्क्रू"
+    },
+    flow: [
+      "type",
+      "diameter",
+      "length",
+      "sizeDisplay",
+      "quantity",
+      "unit",
+      "brand"
+    ],
+    type: [
+      "Self Tapping",
+      "Self Drilling"
+    ],
+    diameter: [
+      "2.2 mm",
+      "2.9 mm",
+      "3.5 mm",
+      "3.9 mm",
+      "4.2 mm",
+      "4.8 mm",
+      "5.5 mm",
+      "6.3 mm"
+    ],
+    length: [
+      "6.5 mm",
+      "8 mm",
+      "9.5 mm",
+      "13 mm",
+      "16 mm",
+      "19 mm",
+      "22 mm",
+      "25 mm",
+      "32 mm",
+      "38 mm",
+      "45 mm",
+      "50 mm",
+      "63 mm",
+      "75 mm"
+    ],
+    sizeDisplayFormat: "Diameter × Length",
+    units: [
+      "pkt"
+    ]
+  },
+
+
+  {
+    id: "s5-washer",
+    stage: "stage5",
+    enabled: false,
+    name: {
+      en: "Washer",
+      hi: "वॉशर"
+    },
+    flow: [
+      "type",
+      "size",
+      "quantity",
+      "unit",
+      "brand"
+    ],
+    typePending: true,
+    sizePending: true,
+    units: [
+      "gm",
+      "kg"
+    ]
+  },
+
+
+  {
+    id: "s5-chain",
+    stage: "stage5",
+    enabled: false,
+    name: {
+      en: "Chain",
+      hi: "चेन"
+    },
+    flow: [
+      "size",
+      "quantity",
+      "unit",
+      "brand"
+    ],
+    sizeUserInput: true,
+    units: [
+      "inch",
+      "ft"
+    ]
+  }
+   
 ];
 
 
