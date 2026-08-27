@@ -3278,7 +3278,88 @@ window.getMaterialCount = function () {
   return window.ESTIMATE_LIST.length;
 
 };
+/* =========================================================
+   UNIVERSAL SHOW / HIDE + FINAL RULE
+   EVERY MATERIAL + MENU + SUB-MENU
+========================================================= */
 
+window.ESTIMATE_LIST.forEach(material => {
+
+  /* Every material is enabled/final */
+  material.final = true;
+
+  /* Material itself can be shown/hidden */
+  material.showHide = true;
+
+  /* Every flow/menu item can be shown/hidden */
+  if (Array.isArray(material.flow)) {
+
+    material.flowConfig = {};
+
+    material.flow.forEach(menu => {
+
+      material.flowConfig[menu] = {
+        show: true,
+        hide: false
+      };
+
+    });
+
+  }
+
+  /* Every option list gets show/hide control */
+  const optionKeys = [
+    "type",
+    "subType",
+    "size",
+    "shape",
+    "material",
+    "conduitSize",
+    "ways",
+    "depth",
+    "hookRod",
+    "module",
+    "door",
+    "phase",
+    "amp",
+    "colour",
+    "voltage",
+    "sensitivity",
+    "base",
+    "wattage",
+    "length",
+    "mounting",
+    "ledDensity",
+    "supply",
+    "ipRating",
+    "structure",
+    "diameter",
+    "cableSize",
+    "studSize"
+  ];
+
+  material.optionConfig = {};
+
+  optionKeys.forEach(key => {
+
+    if (Array.isArray(material[key])) {
+
+      material.optionConfig[key] = {};
+
+      material[key].forEach(option => {
+
+        material.optionConfig[key][option] = {
+          show: true,
+          hide: false
+        };
+
+      });
+
+    }
+
+  });
+
+});
 
 /* =========================================================
    DATABASE VALIDATION
